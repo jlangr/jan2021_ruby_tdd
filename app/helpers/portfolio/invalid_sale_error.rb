@@ -1,0 +1,2 @@
+class InvalidSaleError < StandardError
+end
