@@ -196,3 +196,15 @@ describe('given a checked-out material') do
   end
 end
 
+describe 'injection' do
+  it 'does fun stuff' do
+    allow(Time).to receive(:now).and_return(Time.new(1955, 11, 5))
+
+    expect(Time.now.year).to eq 1955
+
+    dict = Hash.new
+    allow(dict).to receive(:size).and_return(42)
+
+    expect(dict.size).to eq 42
+  end
+end
