@@ -37,7 +37,9 @@ module Pos
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
 
-    config.autoload_paths << Rails.root.join('app/helpers/video')
-    config.autoload_paths << Rails.root.join('app/helpers/portfolio')
+    config.autoload_paths << Rails.root.join('./lib')
+    config.autoload_paths << Rails.root.join('./lib/misc')
+    config.autoload_paths << Rails.root.join('./lib/misc/portfolio')
+    config.autoload_paths << Rails.root.join('./lib/misc/video')
   end
 end

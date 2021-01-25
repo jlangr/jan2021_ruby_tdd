@@ -1,6 +1,6 @@
 require 'rails_helper' # hack to allow running in RubyMine as individual spec
 
-RSpec.describe NameNormalizer do
+RSpec.describe NameNormalizer, type: :helper do
   xit "returns the empty string when passed an empty string" do
     expect(subject.normalize "").to eq ""
   end
