@@ -61,7 +61,17 @@ class Auto
 end
 
 describe Auto do
-  let(:auto) { Auto.new }
+  it "idles engine when started" do
+    subject.depress_brake
+
+    subject.press_start_button
+
+    expect(subject.RPM).to be_between(950, 1100)
+  end
+end
+
+describe Auto do
+  subject(:auto) { Auto.new }
 
   it "idles engine when started" do
     auto.depress_brake

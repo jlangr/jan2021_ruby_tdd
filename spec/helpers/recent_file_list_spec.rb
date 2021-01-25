@@ -1,4 +1,4 @@
-require 'rails_helper'
+#require 'rails_helper'
 
 describe RecentFileList do
   let(:list) { RecentFileList.new }
