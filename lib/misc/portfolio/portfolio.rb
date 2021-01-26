@@ -12,4 +12,8 @@ class Portfolio
   def purchase
     @is_empty = false
   end
+
+  def symbol_count
+    return 1 unless empty?
+  end
 end

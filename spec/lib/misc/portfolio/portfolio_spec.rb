@@ -11,7 +11,11 @@ describe Portfolio do
     expect(subject.empty?).to be false
   end
 
-  it 'is empty when all your por' do
+  xit 'is empty when all your por' do
+  end
+
+  it 'count of symbols is 1 when not empty' do
+    expect(subject.symbol_count).to eq 1
   end
 
 end
