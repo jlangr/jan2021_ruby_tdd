@@ -16,7 +16,7 @@ describe Portfolio do
 
     subject.purchase(symbol)
 
-    expect(subject.symbols).to eq(symbol)
+    expect(subject.symbols).to eq([symbol])
   end
 
   it 'should record multiple symbols' do

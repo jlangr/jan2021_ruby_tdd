@@ -1,15 +1,14 @@
 class Portfolio
   def initialize
-    @is_empty = true
+    @symbols = []
   end
 
   def purchase(symbol)
-    @is_empty = false
-    @symbols = symbol
+    @symbols << symbol
   end
 
   def empty?
-    @is_empty
+    @symbols.empty?
   end
 
   def symbols
