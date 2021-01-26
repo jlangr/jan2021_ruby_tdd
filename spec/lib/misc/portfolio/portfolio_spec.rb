@@ -57,7 +57,13 @@ describe Portfolio do
     expect(subject.purchases).to eql({'APPL': 20})
   end
 
-  it 'should return share of a symbol' do
+  it 'should return 0 if symbol has not been purchased' do
     expect(subject.shares_of('APPL')).to eql(0)
+  end
+
+  it 'should return shares if symbol has been purchased' do
+    subject.purchase('APPL', 10)
+
+    expect(subject.shares_of('APPL')).to eq(10)
   end
 end

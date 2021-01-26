@@ -1,4 +1,6 @@
 class Portfolio
+  attr_reader :purchases
+
   def initialize
     @purchases = Hash.new(0)
   end
@@ -7,12 +9,8 @@ class Portfolio
     @purchases[symbol.to_sym] += shares
   end
 
-  def purchases
-    @purchases
-  end
-
   def shares_of(symbol)
-    0
+    @purchases[symbol.to_sym]
   end
 
   def empty?
