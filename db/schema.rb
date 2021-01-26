@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_01_14_001847) do
+ActiveRecord::Schema.define(version: 2021_01_25_223215) do
 
   create_table "checkout_items", force: :cascade do |t|
     t.string "upc"
@@ -40,6 +40,19 @@ ActiveRecord::Schema.define(version: 2021_01_14_001847) do
     t.string "name"
     t.string "phone"
     t.decimal "discount"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "multi_item_discounts", force: :cascade do |t|
+    t.string "upc"
+    t.string "string"
+    t.string "required_for_discount"
+    t.string "integer"
+    t.string "discount_at_required"
+    t.string "decimal"
+    t.string "description"
+    t.string "text"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
