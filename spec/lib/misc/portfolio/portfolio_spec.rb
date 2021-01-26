@@ -32,7 +32,13 @@ describe Portfolio do
   end
 
   it 'has a purchase method that accepts symbol and shares as params' do
-    expect(subject.purchase('AAPL', '30')).not to_raise(ArgumentError)
+    expect{subject.purchase('AAPL', '30')}.not_to raise_error
+  end
+
+  it 'adds a symbol to the list of symbols after purchase' do
+    purchase('AAPL', '30')
+
+    expect(subject.shares('AAPL')).to eq(30)
   end
 
 end
