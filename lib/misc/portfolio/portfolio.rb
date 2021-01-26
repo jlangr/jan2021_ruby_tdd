@@ -1,17 +1,21 @@
 class Portfolio
   def initialize
-    @symbols = []
+    @purchases = {}
   end
 
-  def purchase(symbol)
-    @symbols << symbol
+  def purchase(symbol, shares)
+    @purchases[symbol.to_sym] = shares
+  end
+
+  def purchases
+    @purchases
   end
 
   def empty?
-    @symbols.empty?
+    @purchases.empty?
   end
 
   def symbols
-    @symbols
+    @purchases.keys.uniq
   end
 end
