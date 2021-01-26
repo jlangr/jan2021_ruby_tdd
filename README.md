@@ -38,3 +38,19 @@ http post :3000/checkouts/1/scan_member/719-287-4335
 
 Recreating the database: 
 ```rake db:drop db:create db:migrate```
+
+## Mob Commands
+
+mob start 5
+mob start 5 --include-uncommitted-changes
+mob next
+
+==
+
+when ready to commit:
+
+mob done
+
+Useful:
+
+mob status
