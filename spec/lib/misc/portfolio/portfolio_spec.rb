@@ -25,6 +25,11 @@ describe Portfolio do
   end
 
   it 'has a symbol count greater than one after multiple purchases' do
+    subject.purchase
+    subject.purchase
+
+    expect(subject.symbol_count).to be > 1
   end
+
 
 end

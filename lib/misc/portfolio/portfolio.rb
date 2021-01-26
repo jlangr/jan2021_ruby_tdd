@@ -1,20 +1,15 @@
 class Portfolio
-  attr_accessor :is_empty
+  attr_accessor :symbol_count
 
   def initialize
-    @is_empty = true
+    @symbol_count = 0
   end
 
   def empty?
-    is_empty
+    symbol_count.zero?
   end
 
   def purchase
-    @is_empty = false
-  end
-
-  def symbol_count
-    return 1 unless empty?
-    0
+    @symbol_count += 1
   end
 end
