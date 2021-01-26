@@ -1,6 +1,11 @@
 class NameNormalizer
+  attr_reader :name
+
   def normalize(name)
-    name.split(' ').reverse.join(', ')
+    return "" if name.blank?
+
+    @name = name
+    first_name
   end
 
   private
@@ -10,10 +15,14 @@ class NameNormalizer
   end
 
   def first_name
-    @parts.first
+    parts.first
   end
 
   def last_name
-    @parts.second
+    parts.second
+  end
+
+  def monomym?
+    parts.size == 1
   end
 end
