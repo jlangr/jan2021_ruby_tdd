@@ -6,7 +6,7 @@ describe Portfolio do
   end
 
   it 'is not empty when a purchase is made' do
-    subject.purchase
+    subject.purchase('AAPL', '30')
 
     expect(subject.empty?).to be false
   end
@@ -19,17 +19,20 @@ describe Portfolio do
   end
 
   it 'count of symbols is 1 when not empty' do
-    subject.purchase
+    subject.purchase('AAPL', '30')
 
     expect(subject.symbol_count).to eq 1
   end
 
   it 'has a symbol count greater than one after multiple purchases' do
-    subject.purchase
-    subject.purchase
+    subject.purchase('AAPL', '30')
+    subject.purchase('AAPL', '30')
 
     expect(subject.symbol_count).to be > 1
   end
 
+  it 'has a purchase method that accepts symbol and shares as params' do
+    expect(subject.purchase('AAPL', '30')).not to_raise(ArgumentError)
+  end
 
 end

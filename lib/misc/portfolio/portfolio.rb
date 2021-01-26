@@ -9,7 +9,7 @@ class Portfolio
     symbol_count.zero?
   end
 
-  def purchase
+  def purchase(symbol, shares)
     @symbol_count += 1
   end
 end
