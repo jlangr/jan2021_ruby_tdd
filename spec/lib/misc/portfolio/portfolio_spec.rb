@@ -36,9 +36,13 @@ describe Portfolio do
   end
 
   it 'adds a symbol to the list of symbols after purchase' do
-    purchase('AAPL', '30')
+    subject.purchase('AAPL', '30')
 
     expect(subject.shares('AAPL')).to eq(30)
+  end
+
+  it 'returns the amount of shares for a specific symbol' do
+    expect(subject.shares('AAPL')).to eq(40)
   end
 
 end

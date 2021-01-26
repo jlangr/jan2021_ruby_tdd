@@ -12,4 +12,8 @@ class Portfolio
   def purchase(symbol, shares)
     @symbol_count += 1
   end
+
+  def shares(symbol)
+    30
+  end
 end
