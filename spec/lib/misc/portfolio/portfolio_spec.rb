@@ -14,8 +14,17 @@ describe Portfolio do
   xit 'is empty when all your por' do
   end
 
+  it 'count of symbols is 0 when empty' do
+    expect(subject.symbol_count).to eq(0)
+  end
+
   it 'count of symbols is 1 when not empty' do
+    subject.purchase
+
     expect(subject.symbol_count).to eq 1
+  end
+
+  it 'has a symbol count greater than one after multiple purchases' do
   end
 
 end

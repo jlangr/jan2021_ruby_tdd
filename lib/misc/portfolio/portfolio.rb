@@ -15,5 +15,6 @@ class Portfolio
 
   def symbol_count
     return 1 unless empty?
+    0
   end
 end
