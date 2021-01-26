@@ -6,13 +6,16 @@ describe Portfolio do
   end
 
   it 'should not be empty if purchases' do
-    portfolio = Portfolio.new
+    subject.purchase("APPL")
 
-    portfolio.purchase
-
-    expect(portfolio).to_not be_empty
+    expect(subject).to_not be_empty
   end
 
-  it 'should' do
+  it 'should record a symbol' do
+    symbol = "APPL"
+
+    subject.purchase(symbol)
+
+    expect(subject.symbols).to eq(symbol)
   end
 end
