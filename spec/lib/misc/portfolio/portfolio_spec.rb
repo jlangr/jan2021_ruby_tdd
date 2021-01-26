@@ -6,8 +6,13 @@ describe Portfolio do
   end
 
   it 'should not be empty if purchases' do
-    subject.purchase
+    portfolio = Portfolio.new
 
-    expect(subject).to_not be_empty
+    portfolio.purchase
+
+    expect(portfolio).to_not be_empty
+  end
+
+  it 'should' do
   end
 end
