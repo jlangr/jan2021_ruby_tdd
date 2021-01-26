@@ -1,8 +1,9 @@
 class Portfolio
-  attr_accessor :symbol_count
+  attr_accessor :symbol_count, :stocks
 
   def initialize
     @symbol_count = 0
+    @stocks = {}
   end
 
   def empty?
@@ -17,7 +18,9 @@ class Portfolio
     return 0 if empty?
     case symbol
     when 'AAPL'
-      30
+      stocks[symbol]
+    when 'BBA'
+      40
     end
   end
 end

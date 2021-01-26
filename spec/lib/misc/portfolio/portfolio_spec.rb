@@ -45,9 +45,11 @@ describe Portfolio do
     expect(subject.shares('AAPL')).to eq(30)
   end
 
+  it 'has a method to return the amount of shares for a specific symbol after you make a purchaes for a differen symbol' do
+    subject.purchase('AAPL', 30)
+    subject.purchase('BBA', 40)
 
-  xit 'returns the amount of shares for a specific symbol' do
-    expect(subject.shares('AAPL')).to eq(40)
+    expect(subject.shares('BBA')).to eq(40)
   end
 
 end
