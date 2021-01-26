@@ -14,6 +14,6 @@ class Portfolio
   end
 
   def shares(symbol)
-    30
+    0
   end
 end

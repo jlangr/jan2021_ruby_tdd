@@ -35,13 +35,18 @@ describe Portfolio do
     expect{subject.purchase('AAPL', '30')}.not_to raise_error
   end
 
+  it 'returns zero when no shares have been purchased for a specific symbol' do
+    expect(subject.shares('AAPL')).to eq(0)
+  end
+
   it 'adds a symbol to the list of symbols after purchase' do
     subject.purchase('AAPL', '30')
 
     expect(subject.shares('AAPL')).to eq(30)
   end
 
-  it 'returns the amount of shares for a specific symbol' do
+
+  xit 'returns the amount of shares for a specific symbol' do
     expect(subject.shares('AAPL')).to eq(40)
   end
 
