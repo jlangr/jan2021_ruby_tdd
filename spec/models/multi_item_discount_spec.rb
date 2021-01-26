@@ -9,9 +9,8 @@ RSpec.describe MultiItemDiscount, type: :model do
 
   describe("discounting BOGO") do
     subject(:discount) { MultiItemDiscount.create(upc: "123", required_for_discount: 2, discount_at_required: 1.0) }
-    before(:context) do
-      create(:item, upc: "123", price: 2.00)
-    end
+    let(:item) { build(:item, upc: "123", price: 2.00) }
+    before() { expect(Item).to receive(:find_by).and_return(item) }
 
     it "discounts 2nd item of bogo" do
       result = discount.price_last([{ upc: "123"}, {upc: "123"}])
