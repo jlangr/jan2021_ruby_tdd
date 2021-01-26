@@ -3,9 +3,11 @@ class NameNormalizer
 
   def normalize(name)
     return "" if name.blank?
-
     @name = name
-    first_name
+
+    return first_name if monomym?
+
+    "#{last_name}, #{first_name}"
   end
 
   private
@@ -16,6 +18,12 @@ class NameNormalizer
 
   def first_name
     parts.first
+  end
+
+  def middle_initial
+    return '' if parts.size == 2
+
+    parts[parts.size - 1].first
   end
 
   def last_name
