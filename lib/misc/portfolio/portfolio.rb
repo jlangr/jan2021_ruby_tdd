@@ -1,5 +1,9 @@
 class Portfolio
+  def purchase
+    @is_empty = false
+  end
+
   def empty?
-    true
+    @is_empty ||= true
   end
 end
