@@ -18,4 +18,14 @@ describe Portfolio do
 
     expect(subject.symbols).to eq(symbol)
   end
+
+  it 'should record multiple symbols' do
+    apple_symbol = 'APPL'
+    tesla_symbol = 'TSLA'
+
+    subject.purchase(apple_symbol)
+    subject.purchase(tesla_symbol)
+
+    expect(subject.symbols).to include(apple_symbol, tesla_symbol)
+  end
 end
