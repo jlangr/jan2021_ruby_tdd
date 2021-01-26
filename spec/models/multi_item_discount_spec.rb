@@ -10,8 +10,7 @@ RSpec.describe MultiItemDiscount, type: :model do
   describe("discounting BOGO") do
     subject(:discount) { MultiItemDiscount.create(upc: "123", required_for_discount: 2, discount_at_required: 1.0) }
     before(:context) do
-      # TODO do with FactoryBot
-      Item.create!(upc: "123", price: 2.00, description: "eggs")   # ! indicates it throws on fail
+      create(:item, upc: "123", price: 2.00)
     end
 
     it "discounts 2nd item of bogo" do
