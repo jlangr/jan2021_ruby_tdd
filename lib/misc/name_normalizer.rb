@@ -7,13 +7,13 @@ class NameNormalizer
 
     return first_name if monomym?
 
-    "#{last_name}, #{first_name} #{middle_initial}".chomp(' ')
+    "#{last_name}, #{first_name} #{middle_initial} #{suffix}".chomp(' ')
   end
 
   private
 
   def parts
-    @parts ||= name.split(' ')
+    @parts ||= name.split(' ') - [suffix]
   end
 
   def first_name
@@ -33,6 +33,10 @@ class NameNormalizer
 
   def middle_names
     parts - [first_name, last_name]
+  end
+
+  def suffix
+    name.split(', ').last
   end
 
   def monomym?
