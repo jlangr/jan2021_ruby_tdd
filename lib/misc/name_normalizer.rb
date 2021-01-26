@@ -1,5 +1,19 @@
 class NameNormalizer
   def normalize(name)
-    raise("not implemented yet")
+    name.split(' ').reverse.join(', ')
+  end
+
+  private
+
+  def parts
+    @parts ||= name.split(' ')
+  end
+
+  def first_name
+    @parts.first
+  end
+
+  def last_name
+    @parts.second
   end
 end
