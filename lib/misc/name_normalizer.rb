@@ -26,9 +26,9 @@ class NameNormalizer
 
   def middle_initial
     return '' if parts.size == 2
-    return middle_names if middle_names.size == 1
+    return middle_names.join if middle_names.join.size == 1
 
-    middle_names.map{|name| "#{name.chr}."}
+    middle_names.map{|name| "#{name.chr}."}.join(' ')
   end
 
   def middle_names

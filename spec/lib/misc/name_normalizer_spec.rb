@@ -29,9 +29,9 @@ RSpec.describe NameNormalizer, type: :helper do
      expect(subject.normalize "Julia Scarlett Elizabeth Louis-Dreyfus").to eq "Louis-Dreyfus, Julia S. E."
    end
 
-  # xit "appends suffixes to end" do
-  #   expect(subject.normalize "Martin Luther King, Jr.").to eq "King, Martin L., Jr."
-  # end
+  it "appends suffixes to end" do
+    expect(subject.normalize "Martin Luther King, Jr.").to eq "King, Martin L., Jr."
+  end
   #
   # xit "throws when name contains too many commas" do
   #   expect { subject.normalize "Thurston, Howell, III" }.to raise_error(ArgumentError)
