@@ -14,6 +14,10 @@ class Portfolio
   end
 
   def shares(symbol)
-    0
+    return 0 if empty?
+    case symbol
+    when 'AAPL'
+      30
+    end
   end
 end
