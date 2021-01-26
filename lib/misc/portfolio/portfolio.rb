@@ -12,15 +12,11 @@ class Portfolio
 
   def purchase(symbol, shares)
     @symbol_count += 1
+    stocks[symbol] = shares
   end
 
   def shares(symbol)
     return 0 if empty?
-    case symbol
-    when 'AAPL'
-      stocks[symbol]
-    when 'BBA'
-      40
-    end
+    stocks[symbol]
   end
 end
