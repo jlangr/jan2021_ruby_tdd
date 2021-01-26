@@ -47,4 +47,17 @@ describe Portfolio do
 
     expect(subject.purchases).to eql({'APPL': 10})
   end
+
+  it 'should increment shares with multiple purchases' do
+    apple_symbol = 'APPL'
+
+    subject.purchase(apple_symbol, 10)
+    subject.purchase(apple_symbol, 10)
+
+    expect(subject.purchases).to eql({'APPL': 20})
+  end
+
+  it 'should return share of a symbol' do
+    expect(subject.shares_of('APPL')).to eql(0)
+  end
 end
