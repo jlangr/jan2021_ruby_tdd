@@ -7,7 +7,7 @@ class NameNormalizer
 
     return first_name if monomym?
 
-    "#{last_name}, #{first_name}"
+    "#{last_name}, #{first_name} #{middle_initial}".chomp(' ')
   end
 
   private
@@ -20,14 +20,19 @@ class NameNormalizer
     parts.first
   end
 
-  def middle_initial
-    return '' if parts.size == 2
-
-    parts[parts.size - 1].first
+  def last_name
+    parts.last
   end
 
-  def last_name
-    parts.second
+  def middle_initial
+    return '' if parts.size == 2
+    return middle_names if middle_names.size == 1
+
+    middle_names.map{|name| "#{name.chr}."}
+  end
+
+  def middle_names
+    parts - [first_name, last_name]
   end
 
   def monomym?

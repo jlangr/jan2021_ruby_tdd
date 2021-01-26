@@ -20,15 +20,15 @@ RSpec.describe NameNormalizer, type: :helper do
   it "initializes middle name" do
     expect(subject.normalize "Henry David Thoreau").to eq "Thoreau, Henry D."
   end
-  #
-  # xit "does not initialize one-letter middle name" do
-  #   expect(subject.normalize "Harry S Truman").to eq "Truman, Harry S"
-  # end
-  #
-  # xit "initializes each of multiple middle names" do
-  #   expect(subject.normalize "Julia Scarlett Elizabeth Louis-Dreyfus").to eq "Louis-Dreyfus, Julia S. E."
-  # end
-  #
+
+   it "does not initialize one-letter middle name" do
+     expect(subject.normalize "Harry S Truman").to eq "Truman, Harry S"
+   end
+
+   it "initializes each of multiple middle names" do
+     expect(subject.normalize "Julia Scarlett Elizabeth Louis-Dreyfus").to eq "Louis-Dreyfus, Julia S. E."
+   end
+
   # xit "appends suffixes to end" do
   #   expect(subject.normalize "Martin Luther King, Jr.").to eq "King, Martin L., Jr."
   # end
