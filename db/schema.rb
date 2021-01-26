@@ -46,13 +46,9 @@ ActiveRecord::Schema.define(version: 2021_01_25_223215) do
 
   create_table "multi_item_discounts", force: :cascade do |t|
     t.string "upc"
-    t.string "string"
-    t.string "required_for_discount"
-    t.string "integer"
-    t.string "discount_at_required"
-    t.string "decimal"
+    t.integer "required_for_discount"
+    t.decimal "discount_at_required"
     t.string "description"
-    t.string "text"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end

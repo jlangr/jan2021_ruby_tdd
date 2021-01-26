@@ -1,25 +1,11 @@
 class MultiItemDiscount < ApplicationRecord
-  validates_presence_of :upc, :discount_at_required
-  validates_numericality_of :discount_at_required, only_integer: true
- # validates :required_for_discount, 
- #   numericality: { only_integer: true, less_than: 5 }
+  validates_presence_of :upc
+  belongs_to :item
 
-  def price(items)
-    puts "\nPRICING #{upc} #{required_for_discount}"
-    item_count = 0
-#    items.filter {| item | item[:upc] 
-    items.map do | item |
-      item_count += 1
-      puts "type: #{required_for_discount.class}"
-      puts "item_count #{item_count} == required_for_discount #{required_for_discount} ? #{item_count == required_for_discount}"
-
-      if item_count == required_for_discount
-        puts "EQ!!!"
-        item.merge(rendered_price: 0.0)
-      else
-        puts "NOT EQ!!!"
-        item.merge(rendered_price: item[:price])
-      end
-    end
+  def price_last(items)
+    item_price = Item.find_by(upc: upc)[:price]
+    count = items.filter {| item | item[:upc] == upc }.size
+    rendered_price = (count % required_for_discount == 0) ? 0.0 : item_price
+    items.last.merge({price: item_price, rendered_price: rendered_price})
   end
 end
