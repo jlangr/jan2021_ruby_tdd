@@ -45,7 +45,7 @@ RSpec.describe 'checkouts API', type: :request do
     describe "scanning a member" do
       before {
         post "/members", params: { name: "Ji Yang", phone: "719-287-4335", discount: "0.123" }
-        get "/checkouts/#{checkout_id}" 
+        get "/checkouts/#{checkout_id}"
       }
 
       it "has no member initially" do
@@ -59,7 +59,7 @@ RSpec.describe 'checkouts API', type: :request do
 
         context "when the checkout is retrieved" do
           before {
-            get "/checkouts/#{checkout_id}" 
+            get "/checkouts/#{checkout_id}"
           }
 
           it "has attached member information" do
@@ -95,35 +95,65 @@ RSpec.describe 'checkouts API', type: :request do
     end
   end
 
-  describe "checkout totals", :only => true do
-    it "does stuff" do
+  describe "checkout totals" do
+    before do
       post "/checkouts", params: {}
-      checkout_id = json["id"]
-      post "/members", params: { name: "Ji Yang", phone: "719-287-4335", discount: "0.03" }
-      post "/checkouts/#{checkout_id}/scan_member/719-287-4335"
-      post "/items/", params: { upc: "77332", description: "Pescanova Smelt Headless - 16oz", price: 7.78 }
-      post "/items/", params: { upc: "84420", description: "Kellogs Bran Flakes Family Size 24oz", price: 4.72 }
-      post "/items", params: {upc: "92311", description: "PowerBall ticket with SuperScam option", price: 10.50, is_exempt: true }
-      puts "checkout id: #{checkout_id}"
-      post "/checkouts/#{checkout_id}/scan/84420"
-      post "/checkouts/#{checkout_id}/scan/77332"
-      get "/checkouts/#{checkout_id}"
-      get "/checkouts/#{checkout_id}/total"
-      expect(json["total"]).to eq "12.13"
-      post "/checkouts/#{checkout_id}/scan/92311"
-      get "/checkouts/#{checkout_id}/total"
-      expect(json["total"]).to eq "22.63"
-      expect(json["total_of_discounted_items"]).to eq "12.13"
-      expect(json["total_saved"]).to eq "0.37"
+      @checkout_id = json["id"]
 
-      expect(json["messages"]).to eq([
-        "Kellogs Bran Flakes Family Size 24oz     4.72",
-        "   3.0% mbr disc                        -0.14",
-        "Pescanova Smelt Headless - 16oz          7.78",
-        "   3.0% mbr disc                        -0.23",
-        "PowerBall ticket with SuperScam option  10.50",
-        "TOTAL                                   22.63",
-        "*** You saved:                           0.37"])
+      post "/members", params: { name: "Ji Yang", phone: "719-287-4335", discount: "0.03" }
+      post "/checkouts/#{@checkout_id}/scan_member/719-287-4335"
+
+      create_item(upc: "77332", description: "Pescanova Smelt Headless - 16oz", price: 7.78 )
+      create_item(upc: "84420", description: "Kellogs Bran Flakes Family Size 24oz", price: 4.72 )
+
+      scan_item("84420")
+      scan_item("77332")
     end
+
+    it "returns the checkout total" do
+      get "/checkouts/#{@checkout_id}/total"
+      expect(json["total"]).to eq "12.13"
+    end
+
+    context "given an exempt item is scanned" do
+      before do
+        create_item(upc: "92311", description: "PowerBall ticket with SuperScam option", price: 10.50, is_exempt: true)
+
+        scan_item("92311")
+
+        get "/checkouts/#{@checkout_id}/total"
+      end
+
+      it "is not discounted in the total" do
+        expect(json["total"]).to eq "22.63"
+      end
+
+      it "is not included in the discounted items total" do
+        expect(json["total_of_discounted_items"]).to eq "12.13"
+      end
+
+      it "does not include exempt items in total savings" do
+        expect(json["total_saved"]).to eq "0.37"
+      end
+
+      it "produces detail receipt" do
+        expect(json["messages"]).to eq([
+          "Kellogs Bran Flakes Family Size 24oz     4.72",
+          "   3.0% mbr disc                        -0.14",
+          "Pescanova Smelt Headless - 16oz          7.78",
+          "   3.0% mbr disc                        -0.23",
+          "PowerBall ticket with SuperScam option  10.50",
+          "TOTAL                                   22.63",
+          "*** You saved:                           0.37"])
+      end
+    end
+  end
+
+  def create_item(params)
+    post "/items/", params: params
+  end
+
+  def scan_item(upc)
+    post "/checkouts/#{@checkout_id}/scan/#{upc}"
   end
 end
