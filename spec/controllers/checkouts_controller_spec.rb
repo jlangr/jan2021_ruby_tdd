@@ -131,10 +131,10 @@ RSpec.describe 'checkouts API', type: :request do
 
       it 'gives member discount on a non-exempt item' do
         post "/checkouts/#{@checkout_id}/scan_member/719-287-4335"
-        post "/checkout/#{@checkout_id}/scan/84420"
-        get "checkouts/#{@checkout_id}"
+        post "/checkouts/#{@checkout_id}/scan/84420"
+        get "/checkouts/#{@checkout_id}/total"
 
-        expect(json['total']).to eq(1)
+        expect(json['total_of_discounted_items']).to eq("4.58")
       end
     end
   end
@@ -153,12 +153,6 @@ RSpec.describe 'checkouts API', type: :request do
       post "/checkouts/#{@checkout_id}/scan/84420"
       post "/checkouts/#{@checkout_id}/scan/77332"
       get "/checkouts/#{@checkout_id}"
-    end
-
-    it "calculates the correct amount saved" do
-      get "/checkouts/#{@checkout_id}/total"
-
-      expect(json["total_of_discounted_items"]).to eq "12.13"
     end
 
     it 'calculates the total saved' do
