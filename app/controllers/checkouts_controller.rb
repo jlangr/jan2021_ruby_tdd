@@ -66,7 +66,7 @@ class CheckoutsController < ApplicationController
       else
         total += price
         text = item.description
-        amount = sprintf("%.2f", price.round(2))
+        amount = format_percent(price)
         amount_width = amount.length
 
         text_width = LINE_WIDTH - amount_width
@@ -75,15 +75,15 @@ class CheckoutsController < ApplicationController
     end
 
     messages << append_total_line(total)
-    formatted_total = sprintf("%.2f", total.round(2))
+    formatted_total = format_percent(total)
 
     if total_saved > 0
-      formatted_total_saved = sprintf("%.2f", total_saved.round(2))
+      formatted_total_saved = format_percent(total_saved)
       messages << append_total_saved(total_saved)
     end
 
-    total_of_discounted_items = sprintf("%.2f", total_of_discounted_items.round(2))
-    total_saved = sprintf("%.2f", total_saved.round(2))
+    total_of_discounted_items = format_percent(total_of_discounted_items)
+    total_saved = format_percent(total_saved)
 
     # send total saved instead
     json_response({checkout_id: @checkout.id, total: formatted_total, total_of_discounted_items: total_of_discounted_items, messages: messages, total_saved: formatted_total_saved})
@@ -91,26 +91,30 @@ class CheckoutsController < ApplicationController
 
   private
 
+  def text_width(width)
+    LINE_WIDTH - width
+  end
+
   def format_percent(number)
     sprintf("%.2f", number.round(2))
   end
 
   def append_total_saved(total_saved)
-    formatted_total_saved = sprintf("%.2f", total_saved.round(2))
+    formatted_total_saved = format_percent(total_saved)
     formatted_total_saved_width = formatted_total_saved.length
     text_width = LINE_WIDTH - formatted_total_saved_width
     "*** You saved:".ljust(text_width) + formatted_total_saved
   end
 
   def discount_line(discount_amount, discount)
-    discount_formatted = '-' + sprintf("%.2f", discount_amount.round(2))
+    discount_formatted = '-' + format_percent(discount_amount)
     text_width = LINE_WIDTH - discount_formatted.length
     text = "   #{discount * 100}% mbr disc"
     "#{text.ljust(text_width)}#{discount_formatted}"
   end
 
   def append_total_line(total)
-    formatted_total = sprintf("%.2f", total.round(2))
+    formatted_total = format_percent(total)
     formatted_total_width = formatted_total.length
     text_width = LINE_WIDTH - formatted_total_width
     "TOTAL".ljust(text_width) + formatted_total
