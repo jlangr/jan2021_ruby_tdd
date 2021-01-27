@@ -40,6 +40,12 @@ class CheckoutsController < ApplicationController
     text.ljust(text_width) + amount
   end
 
+  def format_discount(amount, text)
+    discount_formatted = '-' + sprintf("%.2f", amount.round(2))
+    text_width = LINE_WIDTH - discount_formatted.length
+    messages << "#{text.ljust(text_width)}#{discount_formatted}"
+  end
+
   def checkout_total
     messages = []
     discount = @checkout.member_name ? @checkout.member_discount : 0
@@ -63,12 +69,8 @@ class CheckoutsController < ApplicationController
 
         total += discounted_price
 
-        # discount line
-        # discount_formatted = '-' + sprintf("%.2f", discount_amount.round(2))
-        # text_width = LINE_WIDTH - discount_formatted.length
         text = "   #{discount * 100}% mbr disc"
-        # messages << "#{text.ljust(text_width)}#{discount_formatted}"
-        messages << format_percent(discount_amount.round(2), text)
+        messages << format_discount(discount_amount, text)
 
         total_saved += discount_amount.round(2)
       else
