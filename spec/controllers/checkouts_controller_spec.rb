@@ -126,6 +126,11 @@ RSpec.describe 'checkouts API', type: :request do
       get "/checkouts/#{@checkout_id}/total"
 
       expect(json["total_of_discounted_items"]).to eq "12.13"
+    end
+
+    it 'calculates the total saved' do
+      get "/checkouts/#{@checkout_id}/total"
+
       expect(json["total_saved"]).to eq "0.37"
     end
 
