@@ -73,4 +73,12 @@ describe Portfolio do
 
     expect(subject.shares_of('APPL')).to eql(15)
   end
+
+  it 'should reduce symbol count by 1 after selling all the shares' do
+    subject.purchase('APPL', 20)
+
+    subject.sell('APPL', 20)
+
+    expect(subject.symbols.count).to eql(0)
+  end
 end

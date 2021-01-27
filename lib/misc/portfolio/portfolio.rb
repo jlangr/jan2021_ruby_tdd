@@ -22,6 +22,6 @@ class Portfolio
   end
 
   def symbols
-    @purchases.keys.uniq
+    @purchases.count {|k,v| v > 0 }
   end
 end
