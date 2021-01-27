@@ -52,4 +52,11 @@ describe Portfolio do
     expect(subject.shares('BBA')).to eq(40)
   end
 
+  it 'return the correct number of shares when same stock is purchased twice' do
+    subject.purchase('AAPL', 30)
+    subject.purchase('AAPL', 40)
+
+    expect(subject.shares('AAPL')).to eq(70)
+  end
+
 end

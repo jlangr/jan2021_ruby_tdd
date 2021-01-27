@@ -3,7 +3,7 @@ class Portfolio
 
   def initialize
     @symbol_count = 0
-    @stocks = {}
+    @stocks = Hash.new(0)
   end
 
   def empty?
@@ -12,11 +12,10 @@ class Portfolio
 
   def purchase(symbol, shares)
     @symbol_count += 1
-    stocks[symbol] = shares
+    stocks[symbol] += shares
   end
 
   def shares(symbol)
-    return 0 if empty?
     stocks[symbol]
   end
 end
