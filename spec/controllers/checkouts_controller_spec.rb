@@ -98,19 +98,22 @@ RSpec.describe 'checkouts API', type: :request do
   describe "checkout totals", :only => true do
 
     before do
-      create_non_exempt_items
       create_member
       create_checkout
       assign_member_to_checkout
+
+      create_non_exempt_items
       scan_non_exempt_items
     end
 
-    it 'calculates the checkout total' do
-      get "/checkouts/#{@checkout_id}/total"
-      expect(json["total"]).to eq "12.13"
+    context 'non-exempt from member discount items' do
+      it 'calculates the checkout total' do
+        get "/checkouts/#{@checkout_id}/total"
+        expect(json["total"]).to eq "12.13"
+      end
     end
 
-    context 'when not all items are discounted' do
+    context 'exempt from member discount items' do
       before do
         post "/items", params: {upc: "92311", description: "PowerBall ticket with SuperScam option", price: 10.50, is_exempt: true }
         post "/checkouts/#{@checkout_id}/scan/92311"
