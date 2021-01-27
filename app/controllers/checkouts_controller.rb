@@ -52,53 +52,60 @@ class CheckoutsController < ApplicationController
 
         text = item.description
         # format percent
-        amount = sprintf("%.2f", price.round(2))
-        amount_width = amount.length
-
-        text_width = LINE_WIDTH - amount_width
-        messages << text.ljust(text_width) + amount
+        amount = formatted_currency(price)
+        messages << formatted_message(amount, text)
 
         total += discounted_price
 
         # discount line
-        discount_formatted = '-' + sprintf("%.2f", discount_amount.round(2))
-        text_width = LINE_WIDTH - discount_formatted.length
+        discount_formatted = '-' + formatted_currency(discount_amount)
         text = "   #{discount * 100}% mbr disc"
-        messages << "#{text.ljust(text_width)}#{discount_formatted}"
+        messages << formatted_message(discount_formatted, text)
 
         total_saved += discount_amount.round(2)
       else
         total += price
         text = item.description
-        amount = sprintf("%.2f", price.round(2))
+        amount = formatted_currency(price)
         amount_width = amount.length
-        
+
         text_width = LINE_WIDTH - amount_width
         messages << text.ljust(text_width) + amount
       end
     end
 
     # append total line
-    formatted_total = sprintf("%.2f", total.round(2))
+    formatted_total = formatted_currency(total)
     formatted_total_width = formatted_total.length
     text_width = LINE_WIDTH - formatted_total_width
     messages << "TOTAL".ljust(text_width) + formatted_total
 
     if total_saved > 0
-      formatted_total_saved = sprintf("%.2f", total_saved.round(2))
+      formatted_total_saved = formatted_currency(total_saved)
       formatted_total_saved_width = formatted_total_saved.length
       text_width = LINE_WIDTH - formatted_total_saved_width
       messages << "*** You saved:".ljust(text_width) + formatted_total_saved
     end
 
-    total_of_discounted_items = sprintf("%.2f", total_of_discounted_items.round(2))
-    total_saved = sprintf("%.2f", total_saved.round(2))
+    total_of_discounted_items = formatted_currency(total_of_discounted_items)
+    total_saved = formatted_currency(total_saved)
 
     # send total saved instead
     json_response({checkout_id: @checkout.id, total: formatted_total, total_of_discounted_items: total_of_discounted_items, messages: messages, total_saved: formatted_total_saved})
   end
 
   private
+
+  def formatted_currency(amount)
+    sprintf("%.2f", amount.round(2))
+  end
+
+  def formatted_message(value, text)
+    value_width = value.length
+
+    text_width = LINE_WIDTH - value_width
+    text.ljust(text_width) + value
+  end
 
   def scan_response_with_item_details(upc)
     item = Item.find_by(upc: upc)
