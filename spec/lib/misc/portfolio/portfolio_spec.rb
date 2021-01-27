@@ -16,7 +16,7 @@ describe Portfolio do
 
     subject.purchase(symbol, 1)
 
-    expect(subject.symbols).to eq([symbol.to_sym])
+    expect(subject.symbols).to eq([symbol])
   end
 
   it 'should record multiple symbols' do
@@ -26,7 +26,7 @@ describe Portfolio do
     subject.purchase(apple_symbol, 1)
     subject.purchase(tesla_symbol, 1)
 
-    expect(subject.symbols).to include(apple_symbol.to_sym, tesla_symbol.to_sym)
+    expect(subject.symbols).to include(apple_symbol, tesla_symbol)
   end
 
   it 'should not duplicate mulitiple symbols when multiple purchases of same symbol' do
@@ -45,7 +45,7 @@ describe Portfolio do
 
     subject.purchase(apple_symbol, 10)
 
-    expect(subject.purchases).to eql({'APPL': 10})
+    expect(subject.purchases).to eql({apple_symbol => 10})
   end
 
   it 'should increment shares with multiple purchases' do
@@ -54,7 +54,7 @@ describe Portfolio do
     subject.purchase(apple_symbol, 10)
     subject.purchase(apple_symbol, 10)
 
-    expect(subject.purchases).to eql({'APPL': 20})
+    expect(subject.purchases).to eql({apple_symbol => 20})
   end
 
   it 'should return 0 if symbol has not been purchased' do

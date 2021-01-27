@@ -10,11 +10,11 @@ class Portfolio
   end
 
   def shares_of(symbol)
-    @purchases[symbol.to_sym]
+    @purchases[symbol]
   end
 
   def sell(symbol, shares)
-    @purchases[symbol.to_sym] -= shares
+    @purchases[symbol] -= shares
   end
 
   def empty?
