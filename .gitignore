@@ -33,3 +33,4 @@
 /storage/*
 !/storage/.keep
 /public/uploads
+.vscode/
