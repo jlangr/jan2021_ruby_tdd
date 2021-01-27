@@ -122,9 +122,16 @@ RSpec.describe 'checkouts API', type: :request do
       expect(json["total"]).to eq "22.63"
     end
 
-    it "does more stuff" do
+    it "calculates the correct amount saved" do
+      get "/checkouts/#{@checkout_id}/total"
+
       expect(json["total_of_discounted_items"]).to eq "12.13"
       expect(json["total_saved"]).to eq "0.37"
+    end
+
+    it 'verifies receipt' do
+      post "/checkouts/#{@checkout_id}/scan/92311"
+      get "/checkouts/#{@checkout_id}/total"
 
       expect(json["messages"]).to eq([
         "Kellogs Bran Flakes Family Size 24oz     4.72",
