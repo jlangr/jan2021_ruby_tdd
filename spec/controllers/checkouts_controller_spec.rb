@@ -114,10 +114,15 @@ RSpec.describe 'checkouts API', type: :request do
       expect(json["total"]).to eq "12.13"
     end
 
-    it "does stuff" do
+    it 'updates total after scanning an additional item' do
       post "/checkouts/#{@checkout_id}/scan/92311"
       get "/checkouts/#{@checkout_id}/total"
       expect(json["total"]).to eq "22.63"
+    end
+
+    it "does stuff" do
+      post "/checkouts/#{@checkout_id}/scan/92311"
+      get "/checkouts/#{@checkout_id}/total"
       expect(json["total_of_discounted_items"]).to eq "12.13"
       expect(json["total_saved"]).to eq "0.37"
 
