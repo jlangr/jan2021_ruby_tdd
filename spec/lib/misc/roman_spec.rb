@@ -16,4 +16,24 @@ describe Roman do
   it "returns V when given 5" do
     expect(subject.convert(5)).to eq "V"
   end
+
+  it "returns X when given 10" do
+    expect(subject.convert(10)).to eq "X"
+  end
+
+  it "returns XIV when given 14" do
+    expect(subject.convert(14)).to eq "XIV"
+  end
+
+  it "returns XV when given 15" do
+    expect(subject.convert(15)).to eq "XV"
+  end
+
+  it "returns XX when given 20" do
+    expect(subject.convert(20)).to eq "XX"
+  end
+
+  it "returns C when given 100" do
+    expect(subject.convert(100)).to eq "C"
+  end
 end
