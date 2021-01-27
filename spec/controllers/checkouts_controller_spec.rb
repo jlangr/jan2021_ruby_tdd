@@ -112,7 +112,7 @@ RSpec.describe 'checkouts API', type: :request do
       end
     end
 
-    context 'not member discountable items' do
+    context 'member discountable and not member discountable items' do
       before do
         post "/items", params: {upc: "92311", description: "PowerBall ticket with SuperScam option", price: 10.50, is_exempt: true }
         post "/checkouts/#{@checkout_id}/scan/92311"
@@ -130,9 +130,7 @@ RSpec.describe 'checkouts API', type: :request do
       it 'sums the total saved with member discount' do
         expect(json["total_saved"]).to eq "0.37"
       end
-    end
 
-    context 'member discountable and not member discountable items' do
       it "provides an itemized receipt" do
         expect(json["messages"]).to eq([
           "Kellogs Bran Flakes Family Size 24oz     4.72",
