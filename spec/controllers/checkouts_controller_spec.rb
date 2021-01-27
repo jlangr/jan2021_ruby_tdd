@@ -95,6 +95,26 @@ RSpec.describe 'checkouts API', type: :request do
     end
   end
 
+  describe "checkout totals" do
+    context "one items added to checkout" do
+      before do
+        post "/items/", params: { upc: "84420", description: "Kellogs Bran Flakes Family Size 24oz", price: 4.72 }
+        post "/checkouts", params: {}
+        @checkout_id = json["id"]
+        post "/checkouts/#{@checkout_id}/scan/84420"
+
+        get "/checkouts/#{@checkout_id}/total"
+      end
+
+      it "has the correct total" do
+        expect(json["total"]).to eq "4.72"
+      end
+    end
+
+    context "add mu
+  end
+
+
   describe "checkout totals", :only => true do
     before do
       post "/items/", params: { upc: "77332", description: "Pescanova Smelt Headless - 16oz", price: 7.78 }
@@ -108,11 +128,6 @@ RSpec.describe 'checkouts API', type: :request do
       post "/checkouts/#{@checkout_id}/scan/84420"
       post "/checkouts/#{@checkout_id}/scan/77332"
       get "/checkouts/#{@checkout_id}"
-    end
-
-    it "checks the total" do
-      get "/checkouts/#{@checkout_id}/total"
-      expect(json["total"]).to eq "12.13"
     end
 
     it "adds more items to the total" do
