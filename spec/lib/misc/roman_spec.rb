@@ -17,6 +17,10 @@ describe Roman do
     expect(subject.convert(5)).to eq "V"
   end
 
+  it "returns V when given 9" do
+    expect(subject.convert(9)).to eq "IX"
+  end
+
   it "returns X when given 10" do
     expect(subject.convert(10)).to eq "X"
   end
@@ -33,6 +37,10 @@ describe Roman do
     expect(subject.convert(20)).to eq "XX"
   end
 
+  it "returns XL when given 40" do
+    expect(subject.convert(40)).to eq "XL"
+  end
+
   it "returns L when given 50" do
     expect(subject.convert(50)).to eq "L"
   end
@@ -47,6 +55,10 @@ describe Roman do
 
   it "returns CD when given 400" do
     expect(subject.convert(400)).to eq "CD"
+  end
+
+  it "returns M when given 900" do
+    expect(subject.convert(900)).to eq "CM"
   end
 
   it "returns M when given 1000" do
