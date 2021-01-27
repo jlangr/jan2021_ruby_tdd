@@ -98,17 +98,11 @@ RSpec.describe 'checkouts API', type: :request do
   describe "checkout totals", :only => true do
 
     before do
-      post "/items/", params: { upc: "77332", description: "Pescanova Smelt Headless - 16oz", price: 7.78 }
-      post "/items/", params: { upc: "84420", description: "Kellogs Bran Flakes Family Size 24oz", price: 4.72 }
-      post "/members", params: { name: "Ji Yang", phone: "719-287-4335", discount: "0.03" }
-
-      post "/checkouts", params: {}
-      @checkout_id = json["id"]
-
-      post "/checkouts/#{@checkout_id}/scan_member/719-287-4335"
-
-      post "/checkouts/#{@checkout_id}/scan/84420"
-      post "/checkouts/#{@checkout_id}/scan/77332"
+      create_non_exempt_items
+      create_member
+      create_checkout
+      assign_member_to_checkout
+      scan_non_exempt_items
     end
 
     it 'calculates the checkout total' do
@@ -146,5 +140,31 @@ RSpec.describe 'checkouts API', type: :request do
           "*** You saved:                           0.37"])
       end
     end
+  end
+
+  private
+
+  def create_member
+    post "/members", params: { name: "Ji Yang", phone: "719-287-4335", discount: "0.03" }
+  end
+
+  def create_checkout
+    post "/checkouts", params: {}
+
+    @checkout_id = json["id"]
+  end
+
+  def assign_member_to_checkout
+    post "/checkouts/#{@checkout_id}/scan_member/719-287-4335"
+  end
+
+  def create_non_exempt_items
+    post "/items/", params: { upc: "77332", description: "Pescanova Smelt Headless - 16oz", price: 7.78 }
+    post "/items/", params: { upc: "84420", description: "Kellogs Bran Flakes Family Size 24oz", price: 4.72 }
+  end
+
+  def scan_non_exempt_items
+    post "/checkouts/#{@checkout_id}/scan/84420"
+    post "/checkouts/#{@checkout_id}/scan/77332"
   end
 end
