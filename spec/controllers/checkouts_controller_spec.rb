@@ -45,7 +45,7 @@ RSpec.describe 'checkouts API', type: :request do
     describe "scanning a member" do
       before {
         post "/members", params: { name: "Ji Yang", phone: "719-287-4335", discount: "0.123" }
-        get "/checkouts/#{checkout_id}" 
+        get "/checkouts/#{checkout_id}"
       }
 
       it "has no member initially" do
@@ -59,7 +59,7 @@ RSpec.describe 'checkouts API', type: :request do
 
         context "when the checkout is retrieved" do
           before {
-            get "/checkouts/#{checkout_id}" 
+            get "/checkouts/#{checkout_id}"
           }
 
           it "has attached member information" do
@@ -96,22 +96,27 @@ RSpec.describe 'checkouts API', type: :request do
   end
 
   describe "checkout totals", :only => true do
+    before do
+      post "/items/", params: { upc: "77332", description: "Pescanova Smelt Headless - 16oz", price: 7.78 }
+      post "/items/", params: { upc: "84420", description: "Kellogs Bran Flakes Family Size 24oz", price: 4.72 }
+      post "/items", params: {upc: "92311", description: "PowerBall ticket with SuperScam option", price: 10.50, is_exempt: true }
+    end
+
     it "does stuff" do
       post "/checkouts", params: {}
       checkout_id = json["id"]
       post "/members", params: { name: "Ji Yang", phone: "719-287-4335", discount: "0.03" }
       post "/checkouts/#{checkout_id}/scan_member/719-287-4335"
-      post "/items/", params: { upc: "77332", description: "Pescanova Smelt Headless - 16oz", price: 7.78 }
-      post "/items/", params: { upc: "84420", description: "Kellogs Bran Flakes Family Size 24oz", price: 4.72 }
-      post "/items", params: {upc: "92311", description: "PowerBall ticket with SuperScam option", price: 10.50, is_exempt: true }
-      puts "checkout id: #{checkout_id}"
       post "/checkouts/#{checkout_id}/scan/84420"
       post "/checkouts/#{checkout_id}/scan/77332"
       get "/checkouts/#{checkout_id}"
       get "/checkouts/#{checkout_id}/total"
+
       expect(json["total"]).to eq "12.13"
+
       post "/checkouts/#{checkout_id}/scan/92311"
       get "/checkouts/#{checkout_id}/total"
+
       expect(json["total"]).to eq "22.63"
       expect(json["total_of_discounted_items"]).to eq "12.13"
       expect(json["total_saved"]).to eq "0.37"
