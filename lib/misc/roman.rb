@@ -1,5 +1,6 @@
 class Roman
   NUMERALS = [
+    [500, 'D'],
     [100, 'C'],
     [10, 'X'],
     [5, 'V'],
@@ -7,12 +8,12 @@ class Roman
     [1, 'I']
   ]
 
-  def convert(arabic)
+  def convert(value)
     roman = ''
-    NUMERALS.each do |num, roman_symbol|
-      while arabic >= num do
+    NUMERALS.each do |arabic, roman_symbol|
+      while value >= arabic do
         roman += roman_symbol
-        arabic -= num
+        value -= arabic
       end
     end
     roman
