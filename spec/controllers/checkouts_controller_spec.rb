@@ -104,7 +104,6 @@ RSpec.describe 'checkouts API', type: :request do
       post "/checkouts/#{@checkout_id}/scan_member/719-287-4335"
       post "/items/", params: { upc: "77332", description: "Pescanova Smelt Headless - 16oz", price: 7.78 }
       post "/items/", params: { upc: "84420", description: "Kellogs Bran Flakes Family Size 24oz", price: 4.72 }
-      post "/items", params: {upc: "92311", description: "PowerBall ticket with SuperScam option", price: 10.50, is_exempt: true }
       post "/checkouts/#{@checkout_id}/scan/84420"
       post "/checkouts/#{@checkout_id}/scan/77332"
     end
@@ -114,26 +113,35 @@ RSpec.describe 'checkouts API', type: :request do
       expect(json["total"]).to eq "12.13"
     end
 
-    it 'updates total after scanning an additional item' do
-      post "/checkouts/#{@checkout_id}/scan/92311"
-      get "/checkouts/#{@checkout_id}/total"
-      expect(json["total"]).to eq "22.63"
-    end
+    context '' do
+      before do
+        post "/items", params: {upc: "92311", description: "PowerBall ticket with SuperScam option", price: 10.50, is_exempt: true }
+        post "/checkouts/#{@checkout_id}/scan/92311"
+        get "/checkouts/#{@checkout_id}/total"
+      end
 
-    it "does stuff" do
-      post "/checkouts/#{@checkout_id}/scan/92311"
-      get "/checkouts/#{@checkout_id}/total"
-      expect(json["total_of_discounted_items"]).to eq "12.13"
-      expect(json["total_saved"]).to eq "0.37"
+      it 'updates total after scanning an additional item' do
+        expect(json["total"]).to eq "22.63"
+      end
 
-      expect(json["messages"]).to eq([
-        "Kellogs Bran Flakes Family Size 24oz     4.72",
-        "   3.0% mbr disc                        -0.14",
-        "Pescanova Smelt Headless - 16oz          7.78",
-        "   3.0% mbr disc                        -0.23",
-        "PowerBall ticket with SuperScam option  10.50",
-        "TOTAL                                   22.63",
-        "*** You saved:                           0.37"])
+      it '' do
+        expect(json["total_of_discounted_items"]).to eq "12.13"
+      end
+
+      it '' do
+        expect(json["total_saved"]).to eq "0.37"
+      end
+
+      it "return receipt" do
+        expect(json["messages"]).to eq([
+          "Kellogs Bran Flakes Family Size 24oz     4.72",
+          "   3.0% mbr disc                        -0.14",
+          "Pescanova Smelt Headless - 16oz          7.78",
+          "   3.0% mbr disc                        -0.23",
+          "PowerBall ticket with SuperScam option  10.50",
+          "TOTAL                                   22.63",
+          "*** You saved:                           0.37"])
+      end
     end
   end
 end
