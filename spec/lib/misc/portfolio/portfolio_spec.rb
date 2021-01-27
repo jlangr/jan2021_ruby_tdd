@@ -63,4 +63,15 @@ describe Portfolio do
     expect(subject.shares('AAPL')).to eq(70)
   end
 
+  it 'decreases the number of shared when you sell a stock' do
+    subject.purchase('AAPL', 30)
+
+    subject.sell('AAPL', 25)
+
+    expect(subject.shares('AAPL')).to eq(5)
+  end
+
+  it 'raises an argument error when you try to sell more shares than you own' do
+    sub
+  end
 end

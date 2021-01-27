@@ -1,0 +1,3 @@
+{
+    "ruby.specCommand": "bundle exec rspec"
+}

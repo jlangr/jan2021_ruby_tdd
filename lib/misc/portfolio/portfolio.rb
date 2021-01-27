@@ -13,6 +13,10 @@ class Portfolio
     stocks[symbol] += shares
   end
 
+  def sell(symbol, shares)
+    stocks[symbol] -= shares
+  end
+
   def symbol_count
     stocks.keys.count
   end
