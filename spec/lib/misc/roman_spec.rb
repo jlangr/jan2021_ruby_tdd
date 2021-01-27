@@ -36,8 +36,12 @@ describe Roman do
   it "returns C when given 100" do
     expect(subject.convert(100)).to eq "C"
   end
+  
+  it "returns CD when given 400" do
+    expect(subject.convert(400)).to eq "CD"
+  end
 
-  it "returns M when given 4000" do
-    expect(subject.convert(4000)).to eq "MV"
+  it "returns M when given 1000" do
+    expect(subject.convert(1000)).to eq "M"
   end
 end
