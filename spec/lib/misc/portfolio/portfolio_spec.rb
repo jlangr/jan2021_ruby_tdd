@@ -11,9 +11,6 @@ describe Portfolio do
     expect(subject.empty?).to be false
   end
 
-  xit 'is empty when all your por' do
-  end
-
   it 'count of symbols is 0 when empty' do
     expect(subject.symbol_count).to eq(0)
   end
@@ -24,11 +21,18 @@ describe Portfolio do
     expect(subject.symbol_count).to eq 1
   end
 
-  it 'has a symbol count greater than one after multiple purchases' do
+  it 'has a symbol count stays the same after multiple purchases of the same stock' do
     subject.purchase('AAPL', 30)
     subject.purchase('AAPL', 30)
 
-    expect(subject.symbol_count).to be > 1
+    expect(subject.symbol_count).to eq(1)
+  end
+
+  it 'has a symbol count of 2 when you purchase two different stocks' do
+    subject.purchase('AAPL', 30)
+    subject.purchase('BBA', 30)
+
+    expect(subject.symbol_count).to eq(2)
   end
 
   it 'has a purchase method that accepts symbol and shares as params' do

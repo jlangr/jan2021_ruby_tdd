@@ -1,8 +1,7 @@
 class Portfolio
-  attr_accessor :symbol_count, :stocks
+  attr_accessor :stocks
 
   def initialize
-    @symbol_count = 0
     @stocks = Hash.new(0)
   end
 
@@ -11,8 +10,11 @@ class Portfolio
   end
 
   def purchase(symbol, shares)
-    @symbol_count += 1
     stocks[symbol] += shares
+  end
+
+  def symbol_count
+    stocks.keys.count
   end
 
   def shares(symbol)
