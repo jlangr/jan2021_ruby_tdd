@@ -125,7 +125,17 @@ RSpec.describe 'checkouts API', type: :request do
     end
 
     context "customer has a member discount" do
+      before do
+        post "/members", params: { name: "Ji Yang", phone: "719-287-4335", discount: "0.03" }
+      end
 
+      it 'gives member discount on a non-exempt item' do
+        post "/checkouts/#{@checkout_id}/scan_member/719-287-4335"
+        post "/checkout/#{@checkout_id}/scan/84420"
+        get "checkouts/#{@checkout_id}"
+
+        expect(json['total']).to eq(1)
+      end
     end
   end
 
