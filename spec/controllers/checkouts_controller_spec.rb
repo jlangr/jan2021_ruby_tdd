@@ -96,24 +96,23 @@ RSpec.describe 'checkouts API', type: :request do
   end
 
   describe "checkout totals", :only => true do
-
     before do
+      create_non_exempt_items
       create_member
       create_checkout
       assign_member_to_checkout
-
-      create_non_exempt_items
       scan_non_exempt_items
     end
 
-    context 'non-exempt from member discount items' do
+    context 'member discountable items' do
       it 'calculates the checkout total' do
         get "/checkouts/#{@checkout_id}/total"
+
         expect(json["total"]).to eq "12.13"
       end
     end
 
-    context 'exempt from member discount items' do
+    context 'not member discountable items' do
       before do
         post "/items", params: {upc: "92311", description: "PowerBall ticket with SuperScam option", price: 10.50, is_exempt: true }
         post "/checkouts/#{@checkout_id}/scan/92311"
@@ -131,7 +130,9 @@ RSpec.describe 'checkouts API', type: :request do
       it 'sums the total saved with member discount' do
         expect(json["total_saved"]).to eq "0.37"
       end
+    end
 
+    context 'member discountable and not member discountable items' do
       it "provides an itemized receipt" do
         expect(json["messages"]).to eq([
           "Kellogs Bran Flakes Family Size 24oz     4.72",
