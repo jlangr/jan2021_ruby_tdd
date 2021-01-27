@@ -96,13 +96,16 @@ RSpec.describe 'checkouts API', type: :request do
   end
 
   describe "checkout totals" do
+    before do
+      post "/items/", params: { upc: "84420", description: "Kellogs Bran Flakes Family Size 24oz", price: 4.72 }
+      post "/items", params: {upc: "92311", description: "PowerBall ticket with SuperScam option", price: 10.50, is_exempt: true }
+      post "/checkouts", params: {}
+      @checkout_id = json["id"]
+    end
+
     context "one items added to checkout" do
       before do
-        post "/items/", params: { upc: "84420", description: "Kellogs Bran Flakes Family Size 24oz", price: 4.72 }
-        post "/checkouts", params: {}
-        @checkout_id = json["id"]
         post "/checkouts/#{@checkout_id}/scan/84420"
-
         get "/checkouts/#{@checkout_id}/total"
       end
 
@@ -111,7 +114,19 @@ RSpec.describe 'checkouts API', type: :request do
       end
     end
 
-    context "add mu
+    context "add multiple items to checkout" do
+      it "has the correct total" do
+        post "/checkouts/#{@checkout_id}/scan/84420"
+        post "/checkouts/#{@checkout_id}/scan/92311"
+        get "/checkouts/#{@checkout_id}/total"
+
+        expect(json["total"]).to eq "15.22"
+      end
+    end
+
+    context "customer has a member discount" do
+
+    end
   end
 
 
@@ -128,13 +143,6 @@ RSpec.describe 'checkouts API', type: :request do
       post "/checkouts/#{@checkout_id}/scan/84420"
       post "/checkouts/#{@checkout_id}/scan/77332"
       get "/checkouts/#{@checkout_id}"
-    end
-
-    it "adds more items to the total" do
-      post "/checkouts/#{@checkout_id}/scan/92311"
-      get "/checkouts/#{@checkout_id}/total"
-
-      expect(json["total"]).to eq "22.63"
     end
 
     it "calculates the correct amount saved" do
