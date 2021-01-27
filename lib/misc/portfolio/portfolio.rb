@@ -14,7 +14,7 @@ class Portfolio
   end
 
   def sell(symbol, shares)
-    raise_if_too_many_shares
+    raise_if_too_many_shares(shares, symbol)
 
     @purchases[symbol] -= shares
   end
@@ -29,7 +29,7 @@ class Portfolio
 
   private
 
-  def raise_if_too_many_shares
+  def raise_if_too_many_shares(shares, symbol)
     raise StandardError if shares > @purchases[symbol]
   end
 end
