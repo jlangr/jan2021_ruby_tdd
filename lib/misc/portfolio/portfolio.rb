@@ -17,6 +17,10 @@ class Portfolio
     raise ArgumentError if stocks[symbol] < shares
 
     stocks[symbol] -= shares
+
+    if stocks[symbol].zero?
+      stocks.delete(symbol)
+    end
   end
 
   def symbol_count
