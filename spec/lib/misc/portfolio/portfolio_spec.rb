@@ -81,4 +81,10 @@ describe Portfolio do
 
     expect(subject.symbols.count).to eql(0)
   end
+
+  it 'should raise an error when you try to sell more shares than you own' do
+    subject.purchase('APPL', 20)
+
+    expect { subject.sell('APPL', 30) }.to raise_error(StandardError)
+  end
 end

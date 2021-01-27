@@ -14,6 +14,8 @@ class Portfolio
   end
 
   def sell(symbol, shares)
+    raise_if_too_many_shares
+
     @purchases[symbol] -= shares
   end
 
@@ -22,6 +24,12 @@ class Portfolio
   end
 
   def symbols
-    @purchases.count {|k,v| v > 0 }
+    @purchases.select {|_k,v| v > 0 }.keys
+  end
+
+  private
+
+  def raise_if_too_many_shares
+    raise StandardError if shares > @purchases[symbol]
   end
 end
