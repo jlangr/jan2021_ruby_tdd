@@ -66,4 +66,11 @@ describe Portfolio do
 
     expect(subject.shares_of('APPL')).to eq(10)
   end
+
+  it 'should reduce the number of shares in the portfolio when selling' do
+    subject.purchase('APPL', 20)
+    subject.sell('APPL', 5)
+
+    expect(subject.shares_of('APPL')).to eql(15)
+  end
 end
