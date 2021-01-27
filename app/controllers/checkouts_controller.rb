@@ -32,6 +32,14 @@ class CheckoutsController < ApplicationController
     puts "credit verify #{params}"
   end
 
+  def format_percent(price, text)
+    amount = sprintf("%.2f", price.round(2))
+    amount_width = amount.length
+
+    text_width = LINE_WIDTH - amount_width
+    text.ljust(text_width) + amount
+  end
+
   def checkout_total
     messages = []
     discount = @checkout.member_name ? @checkout.member_discount : 0
@@ -51,20 +59,16 @@ class CheckoutsController < ApplicationController
         total_of_discounted_items += discounted_price # add into total
 
         text = item.description
-        # format percent
-        amount = sprintf("%.2f", price.round(2))
-        amount_width = amount.length
-
-        text_width = LINE_WIDTH - amount_width
-        messages << text.ljust(text_width) + amount
+        messages << format_percent(price, text)
 
         total += discounted_price
 
         # discount line
-        discount_formatted = '-' + sprintf("%.2f", discount_amount.round(2))
-        text_width = LINE_WIDTH - discount_formatted.length
+        # discount_formatted = '-' + sprintf("%.2f", discount_amount.round(2))
+        # text_width = LINE_WIDTH - discount_formatted.length
         text = "   #{discount * 100}% mbr disc"
-        messages << "#{text.ljust(text_width)}#{discount_formatted}"
+        # messages << "#{text.ljust(text_width)}#{discount_formatted}"
+        messages << format_percent(discount_amount.round(2), text)
 
         total_saved += discount_amount.round(2)
       else
@@ -72,7 +76,7 @@ class CheckoutsController < ApplicationController
         text = item.description
         amount = sprintf("%.2f", price.round(2))
         amount_width = amount.length
-        
+
         text_width = LINE_WIDTH - amount_width
         messages << text.ljust(text_width) + amount
       end
