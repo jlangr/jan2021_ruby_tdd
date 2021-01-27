@@ -60,11 +60,7 @@ class CheckoutsController < ApplicationController
 
         total += discounted_price
 
-        # discount line
-        discount_formatted = '-' + sprintf("%.2f", discount_amount.round(2))
-        text_width = LINE_WIDTH - discount_formatted.length
-        text = "   #{discount * 100}% mbr disc"
-        messages << "#{text.ljust(text_width)}#{discount_formatted}"
+        messages << discount_line(discount_amount, discount)
 
         total_saved += discount_amount.round(2)
       else
@@ -72,17 +68,14 @@ class CheckoutsController < ApplicationController
         text = item.description
         amount = sprintf("%.2f", price.round(2))
         amount_width = amount.length
-        
+
         text_width = LINE_WIDTH - amount_width
         messages << text.ljust(text_width) + amount
       end
     end
 
-    # append total line
+    messages << append_total_line(total)
     formatted_total = sprintf("%.2f", total.round(2))
-    formatted_total_width = formatted_total.length
-    text_width = LINE_WIDTH - formatted_total_width
-    messages << "TOTAL".ljust(text_width) + formatted_total
 
     if total_saved > 0
       formatted_total_saved = sprintf("%.2f", total_saved.round(2))
@@ -99,6 +92,21 @@ class CheckoutsController < ApplicationController
   end
 
   private
+
+  def discount_line(discount_amount, discount)
+    discount_formatted = '-' + sprintf("%.2f", discount_amount.round(2))
+    text_width = LINE_WIDTH - discount_formatted.length
+    text = "   #{discount * 100}% mbr disc"
+    "#{text.ljust(text_width)}#{discount_formatted}"
+  end
+
+  def append_total_line(total)
+    formatted_total = sprintf("%.2f", total.round(2))
+    formatted_total_width = formatted_total.length
+    text_width = LINE_WIDTH - formatted_total_width
+    "TOTAL".ljust(text_width) + formatted_total
+  end
+
 
   def scan_response_with_item_details(upc)
     item = Item.find_by(upc: upc)
