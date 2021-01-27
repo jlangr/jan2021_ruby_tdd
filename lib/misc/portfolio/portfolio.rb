@@ -14,6 +14,8 @@ class Portfolio
   end
 
   def sell(symbol, shares)
+    raise ArgumentError if stocks[symbol] < shares
+
     stocks[symbol] -= shares
   end
 

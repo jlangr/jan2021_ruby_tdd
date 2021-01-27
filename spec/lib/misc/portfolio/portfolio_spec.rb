@@ -72,6 +72,13 @@ describe Portfolio do
   end
 
   it 'raises an argument error when you try to sell more shares than you own' do
-    sub
+    expect { subject.sell('AAPl', 25) }.to raise_error(ArgumentError)
+  end
+
+  it 'decrements the symbol count if you sell all shares of a symbol' do
+    subject.purchase('AAPL', 30)
+    subject.sell('AAPL', 30)
+
+    expect(subject.symbol_count).to eq(0)
   end
 end
