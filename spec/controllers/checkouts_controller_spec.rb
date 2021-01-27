@@ -124,7 +124,7 @@ RSpec.describe 'checkouts API', type: :request do
         expect(json["total"]).to eq "22.63"
       end
 
-      it '' do
+      it 'member discount' do
         expect(json["total_of_discounted_items"]).to eq "12.13"
       end
 
