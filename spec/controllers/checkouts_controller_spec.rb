@@ -100,24 +100,29 @@ RSpec.describe 'checkouts API', type: :request do
       post "/items/", params: { upc: "77332", description: "Pescanova Smelt Headless - 16oz", price: 7.78 }
       post "/items/", params: { upc: "84420", description: "Kellogs Bran Flakes Family Size 24oz", price: 4.72 }
       post "/items", params: {upc: "92311", description: "PowerBall ticket with SuperScam option", price: 10.50, is_exempt: true }
+
+      post "/checkouts", params: {}
+      @checkout_id = json["id"]
+      post "/members", params: { name: "Ji Yang", phone: "719-287-4335", discount: "0.03" }
+      post "/checkouts/#{@checkout_id}/scan_member/719-287-4335"
+      post "/checkouts/#{@checkout_id}/scan/84420"
+      post "/checkouts/#{@checkout_id}/scan/77332"
+      get "/checkouts/#{@checkout_id}"
     end
 
-    it "does stuff" do
-      post "/checkouts", params: {}
-      checkout_id = json["id"]
-      post "/members", params: { name: "Ji Yang", phone: "719-287-4335", discount: "0.03" }
-      post "/checkouts/#{checkout_id}/scan_member/719-287-4335"
-      post "/checkouts/#{checkout_id}/scan/84420"
-      post "/checkouts/#{checkout_id}/scan/77332"
-      get "/checkouts/#{checkout_id}"
-      get "/checkouts/#{checkout_id}/total"
-
+    it "checks the total" do
+      get "/checkouts/#{@checkout_id}/total"
       expect(json["total"]).to eq "12.13"
+    end
 
-      post "/checkouts/#{checkout_id}/scan/92311"
-      get "/checkouts/#{checkout_id}/total"
+    it "adds more items to the total" do
+      post "/checkouts/#{@checkout_id}/scan/92311"
+      get "/checkouts/#{@checkout_id}/total"
 
       expect(json["total"]).to eq "22.63"
+    end
+
+    it "does more stuff" do
       expect(json["total_of_discounted_items"]).to eq "12.13"
       expect(json["total_saved"]).to eq "0.37"
 
