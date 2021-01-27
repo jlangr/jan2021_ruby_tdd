@@ -1,9 +1,13 @@
 class Roman
-  NUMERALS = [[1, 'I'], [5, 'V']]
+  NUMERALS = [[5, 'V'], [1, 'I']]
   def convert(arabic)
-    return "V" if arabic > 4
+    roman = ''
     NUMERALS.each do |num, roman_symbol|
+      while arabic >= num do
+        roman += roman_symbol
+        arabic -= num
+      end
     end
-    "I" * arabic
+    roman
   end
 end
