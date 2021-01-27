@@ -53,9 +53,8 @@ class CheckoutsController < ApplicationController
         text = item.description
         # format percent
         amount = format_percent(price)
-        amount_width = amount.length
+        text_width = amount_width(amount)
 
-        text_width = LINE_WIDTH - amount_width
         messages << text.ljust(text_width) + amount
 
         total += discounted_price
@@ -67,9 +66,8 @@ class CheckoutsController < ApplicationController
         total += price
         text = item.description
         amount = format_percent(price)
-        amount_width = amount.length
 
-        text_width = LINE_WIDTH - amount_width
+        text_width = amount_width(amount)
         messages << text.ljust(text_width) + amount
       end
     end
@@ -91,8 +89,9 @@ class CheckoutsController < ApplicationController
 
   private
 
-  def text_width(width)
-    LINE_WIDTH - width
+  def amount_width(amount)
+    amount_width = amount.length
+    LINE_WIDTH - amount_width
   end
 
   def format_percent(number)

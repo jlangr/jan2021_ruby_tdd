@@ -45,7 +45,7 @@ RSpec.describe 'checkouts API', type: :request do
     describe "scanning a member" do
       before {
         post "/members", params: { name: "Ji Yang", phone: "719-287-4335", discount: "0.123" }
-        get "/checkouts/#{checkout_id}" 
+        get "/checkouts/#{checkout_id}"
       }
 
       it "has no member initially" do
@@ -59,7 +59,7 @@ RSpec.describe 'checkouts API', type: :request do
 
         context "when the checkout is retrieved" do
           before {
-            get "/checkouts/#{checkout_id}" 
+            get "/checkouts/#{checkout_id}"
           }
 
           it "has attached member information" do
