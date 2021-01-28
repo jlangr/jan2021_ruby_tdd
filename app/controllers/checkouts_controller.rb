@@ -34,7 +34,6 @@ class CheckoutsController < ApplicationController
 
   def checkout_total
     messages = []
-    @discount = @checkout.member_name ? @checkout.member_discount : 0
 
     total_of_discounted_items = 0
     total = 0
@@ -48,17 +47,16 @@ class CheckoutsController < ApplicationController
       amount_width = amount_width(amount)
 
       if eligible_for_discount?(item)
-        discount_amount = @discount * price
-        discounted_price = price * (1.0 - @discount)
+        discount_amount = discount * price
+        discounted_price = price * (1.0 - discount)
 
         total_of_discounted_items += discounted_price # add into total
-
 
         messages << description.ljust(amount_width) + amount
 
         total += discounted_price
 
-        messages << discount_line(discount_amount, @discount)
+        messages << discount_line(discount_amount, discount)
 
         total_saved += discount_amount.round(2)
       else
@@ -85,8 +83,16 @@ class CheckoutsController < ApplicationController
 
   private
 
+  def discount_amount(price)
+    discount * price
+  end
+
+  def discount
+    @checkout.member_name ? @checkout.member_discount : 0
+  end
+
   def eligible_for_discount?(item)
-    not item.is_exempt and @discount > 0
+    not item.is_exempt and discount > 0
   end
 
   def amount_width(amount)
