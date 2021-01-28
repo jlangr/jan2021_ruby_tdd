@@ -43,10 +43,9 @@ class CheckoutsController < ApplicationController
     @checkout.checkout_items.each do | checkout_item |
       item = Item.find_by(upc: checkout_item.upc)
       price = item.price
-      is_exempt = item.is_exempt
-      if not is_exempt and discount > 0
+      if eligible_for_discount?(item)
         discount_amount = @discount * price
-        discounted_price = price * (1.0 - discount)
+        discounted_price = price * (1.0 - @discount)
 
         total_of_discounted_items += discounted_price # add into total
 
@@ -88,8 +87,8 @@ class CheckoutsController < ApplicationController
 
   private
 
-  def eligible_for_discount?
-    if not is_exempt and @discount > 0
+  def eligible_for_discount?(item)
+    not item.is_exempt and @discount > 0
   end
 
   def amount_width(amount)
