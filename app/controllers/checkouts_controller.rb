@@ -69,12 +69,7 @@ class CheckoutsController < ApplicationController
         total_saved += discount_amount.round(2)
       else
         total += price
-        text = item.description
-        amount = sprintf("%.2f", price.round(2))
-        amount_width = amount.length
-
-        text_width = LINE_WIDTH - amount_width
-        messages << text.ljust(text_width) + amount
+        messages << format_percent(price, item.description)
       end
     end
 
@@ -84,9 +79,7 @@ class CheckoutsController < ApplicationController
 
     if total_saved > 0
       formatted_total_saved = sprintf("%.2f", total_saved.round(2))
-      formatted_total_saved_width = formatted_total_saved.length
-      text_width = LINE_WIDTH - formatted_total_saved_width
-      messages << "*** You saved:".ljust(text_width) + formatted_total_saved
+      messages << format_percent(total_saved, "*** You saved:")
     end
 
     total_of_discounted_items = sprintf("%.2f", total_of_discounted_items.round(2))
