@@ -44,10 +44,8 @@ class CheckoutsController < ApplicationController
       item = Item.find_by(upc: checkout_item.upc)
       price = item.price
       is_exempt = item.is_exempt
-      if not is_exempt and discount > 0
-        discount_amount = discount * price
+      unless is_exempt && discount > 0
         discounted_price = price * (1.0 - discount)
-
         total_of_discounted_items += discounted_price # add into total
 
         text = item.description
@@ -58,6 +56,7 @@ class CheckoutsController < ApplicationController
         total += discounted_price
 
         # discount line
+        discount_amount = discount * price
         discount_formatted = '-' + formatted_currency(discount_amount)
         text = "   #{discount * 100}% mbr disc"
         messages << formatted_message(discount_formatted, text)
@@ -78,9 +77,8 @@ class CheckoutsController < ApplicationController
 
     if total_saved > 0
       formatted_total_saved = formatted_currency(total_saved)
-      formatted_total_saved_width = formatted_total_saved.length
-      text_width = LINE_WIDTH - formatted_total_saved_width
-      messages << "*** You saved:".ljust(text_width) + formatted_total_saved
+      text = "#{formatted_message(formatted_total_saved, '*** You saved:')}"
+      messages << text
     end
 
     total_of_discounted_items = formatted_currency(total_of_discounted_items)
