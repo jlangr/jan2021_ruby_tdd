@@ -76,14 +76,9 @@ class CheckoutsController < ApplicationController
       total += price
     end
 
-    # append total line
     messages << format_percent(total, 'TOTAL')
+    messages << format_percent(total_saved, "*** You saved:") if total_saved > 0
 
-    if total_saved > 0
-      messages << format_percent(total_saved, "*** You saved:")
-    end
-
-    # send total saved instead
     json_response({
       checkout_id: @checkout.id,
       total: format_amount(total),
