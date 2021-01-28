@@ -33,7 +33,7 @@ class CheckoutsController < ApplicationController
   end
 
   def format_percent(price, text)
-    amount = sprintf("%.2f", price.round(2))
+    amount = format_amount(price)
     amount_width = amount.length
 
     text_width = LINE_WIDTH - amount_width
@@ -46,6 +46,10 @@ class CheckoutsController < ApplicationController
 
   def is_discountable?(item)
     not item.is_exempt and discount > 0
+  end
+
+  def format_amount(amount)
+    sprintf("%.2f", amount.round(2))
   end
 
   def checkout_total
@@ -78,19 +82,14 @@ class CheckoutsController < ApplicationController
     end
 
     # append total line
-    formatted_total = sprintf("%.2f", total.round(2))
     messages << format_percent(total, 'TOTAL')
 
     if total_saved > 0
-      formatted_total_saved = sprintf("%.2f", total_saved.round(2))
       messages << format_percent(total_saved, "*** You saved:")
     end
 
-    total_of_discounted_items = sprintf("%.2f", total_of_discounted_items.round(2))
-    total_saved = sprintf("%.2f", total_saved.round(2))
-
     # send total saved instead
-    json_response({checkout_id: @checkout.id, total: formatted_total, total_of_discounted_items: total_of_discounted_items, messages: messages, total_saved: formatted_total_saved})
+    json_response({checkout_id: @checkout.id, total: format_amount(total), total_of_discounted_items: format_amount(total_of_discounted_items), messages: messages, total_saved: format_amount(total_saved)})
   end
 
   private
