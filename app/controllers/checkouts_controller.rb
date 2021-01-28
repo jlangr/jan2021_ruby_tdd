@@ -34,7 +34,7 @@ class CheckoutsController < ApplicationController
 
   def checkout_total
     messages = []
-    discount = @checkout.member_name ? @checkout.member_discount : 0
+    @discount = @checkout.member_name ? @checkout.member_discount : 0
 
     total_of_discounted_items = 0
     total = 0
@@ -45,13 +45,12 @@ class CheckoutsController < ApplicationController
       price = item.price
       is_exempt = item.is_exempt
       if not is_exempt and discount > 0
-        discount_amount = discount * price
+        discount_amount = @discount * price
         discounted_price = price * (1.0 - discount)
 
         total_of_discounted_items += discounted_price # add into total
 
         text = item.description
-        # format percent
         amount = format_percent(price)
         text_width = amount_width(amount)
 
@@ -59,7 +58,7 @@ class CheckoutsController < ApplicationController
 
         total += discounted_price
 
-        messages << discount_line(discount_amount, discount)
+        messages << discount_line(discount_amount, @discount)
 
         total_saved += discount_amount.round(2)
       else
@@ -88,6 +87,10 @@ class CheckoutsController < ApplicationController
   end
 
   private
+
+  def eligible_for_discount?
+    if not is_exempt and @discount > 0
+  end
 
   def amount_width(amount)
     amount_width = amount.length
