@@ -53,12 +53,11 @@ class CheckoutsController < ApplicationController
         total += discounted_price(price)
 
         # discount line
-        discount_amount(price)
         discount_formatted = '-' + formatted_currency(discount_amount(price))
         text = "   #{member_discount * 100}% mbr disc"
         messages << formatted_message(discount_formatted, text)
 
-        total_saved += discount_amount(price).round(2)
+        total_saved += discount_amount(price)
       else
         total += price
         text = item.description
@@ -88,7 +87,7 @@ class CheckoutsController < ApplicationController
   private
 
   def discount_amount(price)
-    member_discount * price
+    (member_discount * price).round(2)
   end
 
   def discounted_price(price)
