@@ -79,10 +79,9 @@ class CheckoutsController < ApplicationController
     end
 
     # append total line
-    formatted_total = sprintf("%.2f", total.round(2))
-    formatted_total_width = formatted_total.length
-    text_width = LINE_WIDTH - formatted_total_width
-    #messages << "TOTAL".ljust(text_width) + formatted_total
+    # formatted_total = sprintf("%.2f", total.round(2))
+    # formatted_total_width = formatted_total.length
+    # text_width = LINE_WIDTH - formatted_total_width
     messages << format_percent(total, 'TOTAL')
 
     if total_saved > 0
