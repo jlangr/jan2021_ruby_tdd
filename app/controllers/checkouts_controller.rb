@@ -34,6 +34,7 @@ class CheckoutsController < ApplicationController
 
   def checkout_total
     messages = []
+    line_items = []
 
     total_of_discounted_items = 0
     total = 0
@@ -46,15 +47,16 @@ class CheckoutsController < ApplicationController
       amount = format_percent(price)
       amount_width = amount_width(amount)
 
-      messages << description.ljust(amount_width) + amount
+      line_item = { description: description, amount: amount } 
       if eligible_for_discount?(item)
         total_of_discounted_items += discounted_price(price)
 
         price = discounted_price(price)
         total_saved += discount_amount(price).round(2)
 
-        messages << discount_line(discount_amount(price), discount)
+        line_item[:discount] = discount
       end
+      line_items << line_item
       total += price
     end
 
