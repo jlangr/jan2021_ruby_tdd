@@ -62,23 +62,20 @@ class CheckoutsController < ApplicationController
     @checkout.checkout_items.each do | checkout_item |
       item = Item.find_by(upc: checkout_item.upc)
       price = item.price
+      messages << format_percent(price, item.description)
 
       if is_discountable?(item)
         discount_amount = discount * price
-        discounted_price = price * (1.0 - discount)
+        price = price * (1.0 - discount)
 
-        total_of_discounted_items += discounted_price # add into total
+        total_of_discounted_items += price
 
-        messages << format_percent(price, item.description)
-
-        total += discounted_price
         messages << format_percent(-discount_amount, "   #{discount * 100}% mbr disc")
 
         total_saved += discount_amount.round(2)
-      else
-        total += price
-        messages << format_percent(price, item.description)
       end
+
+      total += price
     end
 
     # append total line
