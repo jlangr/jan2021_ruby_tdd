@@ -43,17 +43,18 @@ class CheckoutsController < ApplicationController
     @checkout.checkout_items.each do | checkout_item |
       item = Item.find_by(upc: checkout_item.upc)
       price = item.price
+      description = item.description
+      amount = format_percent(price)
+      amount_width = amount_width(amount)
+
       if eligible_for_discount?(item)
         discount_amount = @discount * price
         discounted_price = price * (1.0 - @discount)
 
         total_of_discounted_items += discounted_price # add into total
 
-        text = item.description
-        amount = format_percent(price)
-        text_width = amount_width(amount)
 
-        messages << text.ljust(text_width) + amount
+        messages << description.ljust(amount_width) + amount
 
         total += discounted_price
 
@@ -62,11 +63,8 @@ class CheckoutsController < ApplicationController
         total_saved += discount_amount.round(2)
       else
         total += price
-        text = item.description
-        amount = format_percent(price)
 
-        text_width = amount_width(amount)
-        messages << text.ljust(text_width) + amount
+        messages << description.ljust(amount_width) + amount
       end
     end
 
