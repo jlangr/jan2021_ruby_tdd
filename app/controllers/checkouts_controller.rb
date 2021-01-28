@@ -50,18 +50,15 @@ class CheckoutsController < ApplicationController
       if eligible_for_discount?(item)
         total_of_discounted_items += discounted_price(price)
 
-
         price = discounted_price(price)
         total_saved += discount_amount(price).round(2)
 
         messages << discount_line(discount_amount(price), discount)
-      else
       end
       total += price
     end
 
     messages << append_total_line(total)
-    formatted_total = format_percent(total)
 
     if total_saved > 0
       formatted_total_saved = format_percent(total_saved)
@@ -72,7 +69,11 @@ class CheckoutsController < ApplicationController
     total_saved = format_percent(total_saved)
 
     # send total saved instead
-    json_response({checkout_id: @checkout.id, total: formatted_total, total_of_discounted_items: total_of_discounted_items, messages: messages, total_saved: formatted_total_saved})
+    json_response(checkout_id: @checkout.id, 
+                  total: format_percent(total), 
+                  total_of_discounted_items: total_of_discounted_items, 
+                  messages: messages, 
+                  total_saved: formatted_total_saved)
   end
 
   private
