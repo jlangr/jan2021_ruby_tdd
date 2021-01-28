@@ -65,13 +65,10 @@ class CheckoutsController < ApplicationController
       messages << append_total_saved(total_saved)
     end
 
-    total_of_discounted_items = format_percent(total_of_discounted_items)
-    total_saved = format_percent(total_saved)
-
     # send total saved instead
     json_response(checkout_id: @checkout.id, 
                   total: format_percent(total), 
-                  total_of_discounted_items: total_of_discounted_items, 
+                  total_of_discounted_items: format_percent(total_of_discounted_items), 
                   messages: messages, 
                   total_saved: formatted_total_saved)
   end
