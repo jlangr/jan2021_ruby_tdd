@@ -55,9 +55,7 @@ class CheckoutsController < ApplicationController
   def checkout_total
     messages = []
 
-    total_of_discounted_items = 0
-    total = 0
-    total_saved = 0
+    total_of_discounted_items = total = total_saved = 0
 
     @checkout.checkout_items.each do | checkout_item |
       item = Item.find_by(upc: checkout_item.upc)
@@ -86,7 +84,12 @@ class CheckoutsController < ApplicationController
     end
 
     # send total saved instead
-    json_response({checkout_id: @checkout.id, total: format_amount(total), total_of_discounted_items: format_amount(total_of_discounted_items), messages: messages, total_saved: format_amount(total_saved)})
+    json_response({
+      checkout_id: @checkout.id,
+      total: format_amount(total),
+      total_of_discounted_items: format_amount(total_of_discounted_items),
+      messages: messages,
+      total_saved: format_amount(total_saved)})
   end
 
   private
