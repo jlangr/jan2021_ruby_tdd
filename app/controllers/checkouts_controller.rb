@@ -46,24 +46,18 @@ class CheckoutsController < ApplicationController
       amount = format_percent(price)
       amount_width = amount_width(amount)
 
+      messages << description.ljust(amount_width) + amount
       if eligible_for_discount?(item)
-        discount_amount = discount * price
-        discounted_price = price * (1.0 - discount)
+        total_of_discounted_items += discounted_price(price)
 
-        total_of_discounted_items += discounted_price # add into total
 
-        messages << description.ljust(amount_width) + amount
+        price = discounted_price(price)
+        total_saved += discount_amount(price).round(2)
 
-        total += discounted_price
-
-        messages << discount_line(discount_amount, discount)
-
-        total_saved += discount_amount.round(2)
+        messages << discount_line(discount_amount(price), discount)
       else
-        total += price
-
-        messages << description.ljust(amount_width) + amount
       end
+      total += price
     end
 
     messages << append_total_line(total)
@@ -82,6 +76,10 @@ class CheckoutsController < ApplicationController
   end
 
   private
+
+  def discounted_price(price)
+    price * (1.0 - discount)
+  end
 
   def discount_amount(price)
     discount * price
