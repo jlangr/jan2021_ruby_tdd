@@ -65,13 +65,10 @@ class CheckoutsController < ApplicationController
 
         total_of_discounted_items += discounted_price # add into total
 
-        text = item.description
-        messages << format_percent(price, text)
+        messages << format_percent(price, item.description)
 
         total += discounted_price
-
-        text = "   #{discount * 100}% mbr disc"
-        messages << format_percent(-discount_amount, text)
+        messages << format_percent(-discount_amount, "   #{discount * 100}% mbr disc")
 
         total_saved += discount_amount.round(2)
       else
