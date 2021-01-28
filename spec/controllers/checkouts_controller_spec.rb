@@ -1,5 +1,14 @@
 require "rails_helper"
 
+def scan(id, upc)
+  post "/checkouts/#{id}/scan/#{upc}"
+end
+
+def scan_member_with_discount(discount)
+  post "/members", params: { name: "Ji Yang", phone: "719-287-4335", discount: discount }
+  post "/checkouts/#{checkout_id}/scan_member/719-287-4335"
+end
+
 RSpec.describe 'checkouts API', type: :request do
 
   describe "checkouts" do
@@ -96,34 +105,60 @@ RSpec.describe 'checkouts API', type: :request do
   end
 
   describe "checkout totals", :only => true do
-    it "does stuff" do
+    before() do
       post "/checkouts", params: {}
-      checkout_id = json["id"]
-      post "/members", params: { name: "Ji Yang", phone: "719-287-4335", discount: "0.03" }
-      post "/checkouts/#{checkout_id}/scan_member/719-287-4335"
-      post "/items/", params: { upc: "77332", description: "Pescanova Smelt Headless - 16oz", price: 7.78 }
-      post "/items/", params: { upc: "84420", description: "Kellogs Bran Flakes Family Size 24oz", price: 4.72 }
-      post "/items", params: {upc: "92311", description: "PowerBall ticket with SuperScam option", price: 10.50, is_exempt: true }
-      puts "checkout id: #{checkout_id}"
-      post "/checkouts/#{checkout_id}/scan/84420"
-      post "/checkouts/#{checkout_id}/scan/77332"
-      get "/checkouts/#{checkout_id}"
-      get "/checkouts/#{checkout_id}/total"
-      expect(json["total"]).to eq "12.13"
-      post "/checkouts/#{checkout_id}/scan/92311"
-      get "/checkouts/#{checkout_id}/total"
-      expect(json["total"]).to eq "22.63"
-      expect(json["total_of_discounted_items"]).to eq "12.13"
-      expect(json["total_saved"]).to eq "0.37"
+    end
 
-      expect(json["messages"]).to eq([
-        "Kellogs Bran Flakes Family Size 24oz     4.72",
-        "   3.0% mbr disc                        -0.14",
-        "Pescanova Smelt Headless - 16oz          7.78",
-        "   3.0% mbr disc                        -0.23",
-        "PowerBall ticket with SuperScam option  10.50",
-        "TOTAL                                   22.63",
-        "*** You saved:                           0.37"])
+    context "given a discountable item has been scanned" do
+      let(:discountable_upc) { "88888" }
+      let(:checkout_id) { json["id"] }
+      before() do
+        scan_member_with_discount("0.01")
+        post "/items/", params: { upc: discountable_upc, description: "Ten dollar item", price: 10.00 }
+        post "/checkouts/#{checkout_id}/scan/#{discountable_upc}"
+      end
+
+      context "when a total is requested" do
+        before() { get "/checkouts/#{checkout_id}/total" }
+
+        it "returns scanned item totals" do
+          expect(json["total"]).to eq "9.90"
+          expect(json["total_of_discounted_items"]).to eq "9.90"
+          expect(json["total_saved"]).to eq "0.10"
+        end
+
+        it "prints a receipt" do
+          expect(json["messages"]).to eq([
+                                           "Ten dollar item                         10.00",
+                                           "   1.0% mbr disc                        -0.10",
+                                           "TOTAL                                    9.90",
+                                           "*** You saved:                           0.10"])
+        end
+      end
+    end
+
+    context "given a non-discountable item has been scanned" do
+      let(:checkout_id) { json["id"] }
+      let(:exempt_upc) { "99999" }
+      before() do
+        post "/items", params: {upc: exempt_upc, description: "One dollar item", price: 1.00, is_exempt: true }
+        post "/checkouts/#{checkout_id}/scan/#{exempt_upc}"
+      end
+
+      context "when a total is requested" do
+        before() { get "/checkouts/#{checkout_id}/total" }
+
+        it "returns scanned item totals" do
+          expect(json["total"]).to eq "1.00"
+          expect(json["total_of_discounted_items"]).to eq "0.00"
+          expect(json["total_saved"]).to eq "0.00" # hmmm
+        end
+
+        it "prints a receipt" do
+          expect(json["messages"]).to eq(["One dollar item                          1.00",
+                                          "TOTAL                                    1.00"])
+        end
+      end
     end
   end
 end

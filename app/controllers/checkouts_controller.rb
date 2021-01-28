@@ -1,13 +1,13 @@
 class CheckoutsController < ApplicationController
   before_action :set_checkout, only: [:show, :scan, :checkout_total, :scan_member]
-  LINE_WIDTH=45
+  LINE_WIDTH = 45
 
   # solve with serializers?
   def show
     items = CheckoutItem.where(checkout_id: @checkout.id)
-    items_hash = items.map {| item | item.serializable_hash }
+    items_hash = items.map { |item| item.serializable_hash }
     with_items = @checkout.serializable_hash.merge({ items: items_hash })
-     json_response(with_items)
+    json_response(with_items)
   end
 
   def create
@@ -32,73 +32,98 @@ class CheckoutsController < ApplicationController
     puts "credit verify #{params}"
   end
 
+  def retrieve_items
+    @checkout.checkout_items.map { |checkout_item| Item.find_by(upc: checkout_item.upc) }
+  end
+
   def checkout_total
-    messages = []
-    discount = @checkout.member_name ? @checkout.member_discount : 0
+    items = retrieve_items
 
-    total_of_discounted_items = 0
-    total = 0
-    total_saved = 0
+    total_saved = calculate_total_saved(items)
+    total_of_all_items = calculate_total_of_all_items
+    total_of_discounted_items = calculate_total_of_discounted_items
 
-    @checkout.checkout_items.each do | checkout_item |
-      item = Item.find_by(upc: checkout_item.upc)
-      price = item.price
-      is_exempt = item.is_exempt
-      if not is_exempt and discount > 0
-        discount_amount = discount * price
-        discounted_price = price * (1.0 - discount)
+    messages = receipt(total_of_all_items, total_saved)
 
-        total_of_discounted_items += discounted_price # add into total
-
-        text = item.description
-        # format percent
-        amount = sprintf("%.2f", price.round(2))
-        amount_width = amount.length
-
-        text_width = LINE_WIDTH - amount_width
-        messages << text.ljust(text_width) + amount
-
-        total += discounted_price
-
-        # discount line
-        discount_formatted = '-' + sprintf("%.2f", discount_amount.round(2))
-        text_width = LINE_WIDTH - discount_formatted.length
-        text = "   #{discount * 100}% mbr disc"
-        messages << "#{text.ljust(text_width)}#{discount_formatted}"
-
-        total_saved += discount_amount.round(2)
-      else
-        total += price
-        text = item.description
-        amount = sprintf("%.2f", price.round(2))
-        amount_width = amount.length
-        
-        text_width = LINE_WIDTH - amount_width
-        messages << text.ljust(text_width) + amount
-      end
-    end
-
-    # append total line
-    formatted_total = sprintf("%.2f", total.round(2))
-    formatted_total_width = formatted_total.length
-    text_width = LINE_WIDTH - formatted_total_width
-    messages << "TOTAL".ljust(text_width) + formatted_total
-
-    if total_saved > 0
-      formatted_total_saved = sprintf("%.2f", total_saved.round(2))
-      formatted_total_saved_width = formatted_total_saved.length
-      text_width = LINE_WIDTH - formatted_total_saved_width
-      messages << "*** You saved:".ljust(text_width) + formatted_total_saved
-    end
-
-    total_of_discounted_items = sprintf("%.2f", total_of_discounted_items.round(2))
-    total_saved = sprintf("%.2f", total_saved.round(2))
-
-    # send total saved instead
-    json_response({checkout_id: @checkout.id, total: formatted_total, total_of_discounted_items: total_of_discounted_items, messages: messages, total_saved: formatted_total_saved})
+    json_response({
+                    checkout_id: @checkout.id,
+                    messages: messages,
+                    total: format_dollar_amount(total_of_all_items),
+                    total_of_discounted_items: format_dollar_amount(total_of_discounted_items),
+                    total_saved: format_dollar_amount(total_saved)})
   end
 
   private
+
+  def receipt(total_of_all_items, total_saved)
+    messages = []
+
+    @checkout.checkout_items.each do |checkout_item|
+      item = Item.find_by(upc: checkout_item.upc)
+      messages << formatted_line_item(item.description, item.price)
+      if discountable?(item)
+        messages << formatted_line_item(discount_line_item_text(member_discount_for_checkout), -(member_discount_for_checkout * item.price))
+      end
+    end
+
+    messages << formatted_line_item("TOTAL", total_of_all_items)
+    if total_saved > 0
+      messages << formatted_line_item("*** You saved:", total_saved)
+    end
+    messages
+  end
+
+  def calculate_total_saved(items)
+    items.filter { | item | discountable? item }
+         .inject(0) { | total, item | total + member_discount_for_checkout * item.price }
+  end
+
+  def calculate_total_of_discounted_items
+    total_of_discounted_items = 0
+    @checkout.checkout_items.each do |checkout_item|
+      item = Item.find_by(upc: checkout_item.upc)
+      if discountable?(item)
+        total_of_discounted_items += item.price * (1.0 - member_discount_for_checkout)
+      end
+    end
+    total_of_discounted_items
+  end
+
+  def calculate_total_of_all_items
+    total_of_all_items = 0
+
+    @checkout.checkout_items.each do |checkout_item|
+      item = Item.find_by(upc: checkout_item.upc)
+      if discountable?(item)
+        total_of_all_items += item.price * (1.0 - member_discount_for_checkout)
+      else
+        total_of_all_items += item.price
+      end
+    end
+    total_of_all_items
+  end
+
+  def member_discount_for_checkout
+    @checkout.member_name ? @checkout.member_discount : 0
+  end
+
+  def discountable?(item)
+    not (item.is_exempt or member_discount_for_checkout === 0)
+  end
+
+  def discount_line_item_text(discount)
+    discount_percent = "#{discount * 100}%"
+    "   #{discount_percent} mbr disc"
+  end
+
+  def formatted_line_item(description_text, dollar_amount)
+    formatted_total = format_dollar_amount(dollar_amount)
+    description_text.ljust(LINE_WIDTH - formatted_total.length) + formatted_total
+  end
+
+  def format_dollar_amount(dollar_amount)
+    sprintf("%.2f", dollar_amount.round(2))
+  end
 
   def scan_response_with_item_details(upc)
     item = Item.find_by(upc: upc)
@@ -117,7 +142,7 @@ class CheckoutsController < ApplicationController
   end
 
   def set_checkout
-#    @checkout = Checkout.find(params[:id])
+    #    @checkout = Checkout.find(params[:id])
     @checkout = Checkout.includes(:checkout_items).find(params[:id])
   end
 
