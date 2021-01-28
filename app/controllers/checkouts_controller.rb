@@ -40,9 +40,16 @@ class CheckoutsController < ApplicationController
     text.ljust(text_width) + amount
   end
 
+  def discount
+    @checkout.member_name ? @checkout.member_discount : 0
+  end
+
+  def is_discountable?(item)
+    not item.is_exempt and discount > 0
+  end
+
   def checkout_total
     messages = []
-    discount = @checkout.member_name ? @checkout.member_discount : 0
 
     total_of_discounted_items = 0
     total = 0
@@ -51,8 +58,8 @@ class CheckoutsController < ApplicationController
     @checkout.checkout_items.each do | checkout_item |
       item = Item.find_by(upc: checkout_item.upc)
       price = item.price
-      is_exempt = item.is_exempt
-      if not is_exempt and discount > 0
+
+      if is_discountable?(item)
         discount_amount = discount * price
         discounted_price = price * (1.0 - discount)
 
