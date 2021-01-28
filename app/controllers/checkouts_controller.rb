@@ -67,18 +67,14 @@ class CheckoutsController < ApplicationController
         total += price
         text = item.description
         amount = formatted_currency(price)
-        amount_width = amount.length
-
-        text_width = LINE_WIDTH - amount_width
-        messages << text.ljust(text_width) + amount
+        messages << formatted_message(amount, text)
       end
     end
 
     # append total line
     formatted_total = formatted_currency(total)
-    formatted_total_width = formatted_total.length
-    text_width = LINE_WIDTH - formatted_total_width
-    messages << "TOTAL".ljust(text_width) + formatted_total
+    text = "#{formatted_message(formatted_total, 'TOTAL')}"
+    messages << text
 
     if total_saved > 0
       formatted_total_saved = formatted_currency(total_saved)
