@@ -34,7 +34,6 @@ class CheckoutsController < ApplicationController
 
   def checkout_total
     messages = []
-    discount = @checkout.member_name ? @checkout.member_discount : 0
 
     total_of_discounted_items = 0
     total = 0
@@ -44,8 +43,8 @@ class CheckoutsController < ApplicationController
       item = Item.find_by(upc: checkout_item.upc)
       price = item.price
       is_exempt = item.is_exempt
-      unless is_exempt && discount > 0
-        discounted_price = price * (1.0 - discount)
+      unless is_exempt && member_discount > 0
+        discounted_price = price * (1.0 - member_discount)
         total_of_discounted_items += discounted_price # add into total
 
         text = item.description
@@ -56,9 +55,9 @@ class CheckoutsController < ApplicationController
         total += discounted_price
 
         # discount line
-        discount_amount = discount * price
+        discount_amount = member_discount * price
         discount_formatted = '-' + formatted_currency(discount_amount)
-        text = "   #{discount * 100}% mbr disc"
+        text = "   #{member_discount * 100}% mbr disc"
         messages << formatted_message(discount_formatted, text)
 
         total_saved += discount_amount.round(2)
@@ -89,6 +88,10 @@ class CheckoutsController < ApplicationController
   end
 
   private
+
+  def member_discount
+    @checkout.member_discount || 0
+  end
 
   def formatted_currency(amount)
     sprintf("%.2f", amount.round(2))
