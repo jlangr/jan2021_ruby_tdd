@@ -1,6 +1,21 @@
+class ProductionStockService
+  def price(_symbol)
+    raise "system down"
+  end
+end
+
 class Portfolio
-  def initialize
+  attr_accessor :stock_service
+
+  def initialize(stock_service=ProductionStockService.new)
     @holdings = Hash.new
+    @stock_service = stock_service
+  end
+
+  def value
+    @holdings.keys.inject(0) do |total, symbol|
+      total + stock_service.price(symbol) * self[symbol]
+    end
   end
 
   def empty?

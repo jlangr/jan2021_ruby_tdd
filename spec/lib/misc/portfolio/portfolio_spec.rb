@@ -1,7 +1,19 @@
 require 'rails_helper'
 
+APPLE_PRICE = 400
+MICROSOFT_PRICE = 100
+
+class StubStockService
+  def price(symbol)
+    symbol === "AAPL" ? APPLE_PRICE : MICROSOFT_PRICE
+  end
+end
+
 describe Portfolio do
-  let(:portfolio) { Portfolio.new }
+  #let(:portfolio) { Portfolio.new(StubStockService.new) }
+  let(:stock_service) { double }
+  let(:portfolio) { Portfolio.new(stock_service) }
+
 
   context "when created" do
     it "is empty" do
@@ -18,6 +30,11 @@ describe Portfolio do
 
     it "throws when purchasing too many shares" do
       expect { portfolio.sell("AAPL", 1) }.to raise_error(InvalidSaleError)
+    end
+
+    it "has value of 0" do
+      portfolio.stock_service = StubStockService.new
+      expect(portfolio.value()).to eq 0
     end
   end
 
@@ -37,6 +54,13 @@ describe Portfolio do
     it "returns share count for purchased symbol" do
       expect(portfolio["AAPL"]).to equal 42
     end
+
+    it "has value of symbol price" do
+      expect(stock_service).to receive(:price).with("AAPL")
+                                              .and_return(APPLE_PRICE)
+
+      expect(portfolio.value()).to eq APPLE_PRICE * 42
+    end
   end
 
   context "after multiple purchases different symbols" do
@@ -51,6 +75,16 @@ describe Portfolio do
 
     it "returns appropriate share count for symbol" do
       expect(portfolio["AAPL"]).to equal 20
+    end
+
+    it "sums values for all symbols" do
+      allow(stock_service).to receive(:price).with("AAPL")
+                                              .and_return(APPLE_PRICE)
+      allow(stock_service).to receive(:price).with("MSFT")
+                                              .and_return(MICROSOFT_PRICE)
+
+      expect(portfolio.value())
+        .to eq 20 * APPLE_PRICE + 10 * MICROSOFT_PRICE
     end
   end
 
@@ -89,5 +123,6 @@ describe Portfolio do
     it "sums share count" do
       expect(portfolio["AAPL"]).to equal 20 + 10
     end
+
   end
 end
